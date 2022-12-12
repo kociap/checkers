@@ -1,4 +1,4 @@
-package com.example.checkers;
+package checkers;
 
 public enum PieceType {
     RED(1), WHITE(-1);

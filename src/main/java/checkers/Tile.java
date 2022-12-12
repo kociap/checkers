@@ -1,4 +1,4 @@
-package com.example.checkers;
+package checkers;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

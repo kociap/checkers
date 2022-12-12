@@ -1,12 +1,12 @@
-package com.example.checkers;
+package checkers;
 
-import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-public class CheckersApp extends Application {
+public class CheckersApp {
     public static final int tileSize = 100;
     public static final int width = 8;
     public static final int height = 8;
@@ -30,7 +30,6 @@ public class CheckersApp extends Application {
         return root;
     }
 
-    @Override
     public void start(Stage primatyStage) throws Exception {
         Scene scene = new Scene(createContent());
         primatyStage.setTitle("Checkers");
@@ -39,6 +38,14 @@ public class CheckersApp extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        Platform.startup(() -> {
+            final Stage stage = new Stage();
+            final CheckersApp app = new CheckersApp();
+            try {
+                app.start(stage);
+            } catch(Exception e) {
+
+            }
+        });
     }
 }

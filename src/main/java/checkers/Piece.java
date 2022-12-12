@@ -1,10 +1,10 @@
-package com.example.checkers;
+package checkers;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
-import static com.example.checkers.CheckersApp.tileSize;
+import static checkers.CheckersApp.tileSize;
 
 public class Piece extends StackPane {
     private PieceType type;
