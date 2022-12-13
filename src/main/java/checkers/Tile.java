@@ -18,11 +18,11 @@ public class Tile extends Rectangle {
         this.piece = piece;
     }
 
-    public Tile(boolean light, int x, int y) {
-        setWidth(CheckersApp.tileSize);
-        setHeight(CheckersApp.tileSize);
+    public Tile(boolean light, int x, int y, int tileSize) {
+        setWidth(tileSize);
+        setHeight(tileSize);
 
-        relocate(x * CheckersApp.tileSize, y * CheckersApp.tileSize);
+        relocate(x * tileSize, y * tileSize);
 
         setFill(light ? Color.GREENYELLOW : Color.GREEN);
     }

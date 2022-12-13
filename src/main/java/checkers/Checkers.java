@@ -6,13 +6,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-public class CheckersApp {
+
+import checkers.server.Server;
+import checkers.modes.*;
+
+public class Checkers {
     public static final int tileSize = 100;
     public static final int width = 8;
     public static final int height = 8;
 
     private Group tileGroup = new Group();
     private Group pieceGroup = new Group();
+    private Server server = new Server();
 
     private Parent createContent() {
         Pane root = new Pane();
@@ -21,7 +26,7 @@ public class CheckersApp {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                Tile tile = new Tile((x + y) % 2 == 0, x, y);
+                Tile tile = new Tile((x + y) % 2 == 0, x, y, tileSize);
 
                 tileGroup.getChildren().add(tile);
             }
@@ -30,22 +35,19 @@ public class CheckersApp {
         return root;
     }
 
-    public void start(Stage primatyStage) throws Exception {
+    public void run() {
+        this.server.setEngine(new EnglishDraughts8x8Engine());
+        final Stage stage = new Stage();
         Scene scene = new Scene(createContent());
-        primatyStage.setTitle("Checkers");
-        primatyStage.setScene(scene);
-        primatyStage.show();
+        stage.setTitle("Checkers");
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static void main(String[] args) {
         Platform.startup(() -> {
-            final Stage stage = new Stage();
-            final CheckersApp app = new CheckersApp();
-            try {
-                app.start(stage);
-            } catch(Exception e) {
-
-            }
+            final Checkers game = new Checkers();
+            game.run();
         });
     }
 }
