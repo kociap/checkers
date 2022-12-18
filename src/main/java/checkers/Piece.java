@@ -6,9 +6,10 @@ import javafx.scene.shape.Ellipse;
 
 import static checkers.Checkers.tileSize;
 
+
 public class Piece extends StackPane {
 
-    private PieceType type;
+    private final PieceType type;
     private double mouseX, mouseY;
     private double oldX, oldY;
     public PieceType getType() {
@@ -39,7 +40,15 @@ public class Piece extends StackPane {
 
         // gives pieces a color
         Ellipse ellipse = new Ellipse(tileSize * 0.3125, tileSize * 0.26);
-        ellipse.setFill(type == PieceType.RED ? Color.RED : Color.WHITE);
+        if(type == PieceType.RED) {
+            ellipse.setFill(Color.RED);
+        } else if(type == PieceType.RED_KING) {
+            ellipse.setFill(Color.DARKRED);
+        } else if(type == PieceType.WHITE) {
+            ellipse.setFill(Color.WHITE);
+        } else if(type == PieceType.WHITE_KING) {
+            ellipse.setFill(Color.GRAY);
+        }
 
         ellipse.setStroke(Color.BLACK);
         ellipse.setStrokeWidth(tileSize * 0.03);
