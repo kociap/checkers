@@ -3,9 +3,15 @@ package checkers.server;
 import checkers.Point;
 
 public class LogicalPiece implements Piece {
+    private Point position;
     private Color color;
     private Kind kind;
-    private Point position;
+
+    public LogicalPiece(Point position, Color color, Kind kind) {
+        this.position = position;
+        this.color = color;
+        this.kind = kind;
+    }
 
     @Override
     public Point getPosition() {
@@ -27,6 +33,6 @@ public class LogicalPiece implements Piece {
     }
 
     public void promote() {
-        kind = Kind.queen;
+        kind = Kind.king;
     }
 }

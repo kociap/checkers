@@ -5,7 +5,7 @@ import checkers.Point;
 public interface Piece {
     public enum Kind {
         pawn,
-        queen,
+        king,
     }
 
     public enum Color {

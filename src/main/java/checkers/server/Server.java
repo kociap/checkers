@@ -1,10 +1,13 @@
 package checkers.server;
 
 public class Server {
-    // TODO: Temporarily public.
-    public Engine engine;
+    private Engine engine;
 
     public void setEngine(Engine engine) {
         this.engine = engine;
+    }
+
+    public Engine getEngine() {
+        return engine;
     }
 }

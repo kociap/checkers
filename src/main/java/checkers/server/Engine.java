@@ -1,9 +1,9 @@
 package checkers.server;
 
-import java.util.Iterator;
-import java.util.List;
 import checkers.Dimensions2D;
 import checkers.Point;
+import java.util.Iterator;
+import java.util.List;
 
 public interface Engine {
     Dimensions2D getBoardSize();
