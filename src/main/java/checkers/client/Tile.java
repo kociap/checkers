@@ -1,5 +1,6 @@
 package checkers.client;
 
+import checkers.Piece;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -25,5 +26,9 @@ public class Tile extends Rectangle {
         relocate(x * tileSize, y * tileSize);
 
         setFill(light ? Color.GREENYELLOW : Color.GREEN);
+    }
+
+    void setColor(Color color) {
+        setFill(color);
     }
 }

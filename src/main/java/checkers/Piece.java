@@ -1,4 +1,4 @@
-package checkers.server;
+package checkers;
 
 import checkers.Point;
 
@@ -13,6 +13,7 @@ public interface Piece {
         red,
     }
 
+    int getID();
     Kind getKind();
     Color getColor();
     Point getPosition();

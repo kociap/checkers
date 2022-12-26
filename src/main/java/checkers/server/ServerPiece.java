@@ -1,16 +1,24 @@
 package checkers.server;
 
+import checkers.Piece;
 import checkers.Point;
 
-public class LogicalPiece implements Piece {
+public class ServerPiece implements Piece {
+    private int ID;
     private Point position;
     private Color color;
     private Kind kind;
 
-    public LogicalPiece(Point position, Color color, Kind kind) {
+    public ServerPiece(int ID, Point position, Color color, Kind kind) {
+        this.ID = ID;
         this.position = position;
         this.color = color;
         this.kind = kind;
+    }
+
+    @Override
+    public int getID() {
+        return ID;
     }
 
     @Override

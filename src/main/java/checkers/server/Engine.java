@@ -1,6 +1,9 @@
 package checkers.server;
 
 import checkers.Dimensions2D;
+import checkers.MoveCommand;
+import checkers.MoveResult;
+import checkers.Piece;
 import checkers.Point;
 import java.util.Iterator;
 import java.util.List;

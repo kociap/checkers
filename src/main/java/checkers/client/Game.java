@@ -1,12 +1,10 @@
 package checkers.client;
 
 import checkers.Dimensions2D;
+import checkers.MoveResult;
+import checkers.Piece;
 import checkers.Point;
-import checkers.modes.*;
-import checkers.server.MoveResult;
-import checkers.server.Piece;
-import checkers.server.PieceIterable;
-import checkers.server.Server;
+import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -31,7 +29,13 @@ public class Game {
         new Group(); // JavaFX group that contains all tiles
     private final Group pieceGroup =
         new Group(); // JavaFX group that contains all pieces
-    private final Server server = new Server();
+
+    private Client client;
+    private List<ClientPiece> pieces;
+
+    public Game() {
+        client = new Client();
+    }
 
     /**
      * Sets pieces at right tiles and returns board with
@@ -39,11 +43,10 @@ public class Game {
      *
      * @return root witch is actual content of the scene.
      */
-    private Parent createContent() {
+    private Parent initialiseContent() {
         Pane root = new Pane();
 
-        final checkers.server.Engine engine = server.getEngine();
-        final Dimensions2D dimensions = engine.getBoardSize();
+        final Dimensions2D dimensions = client.getBoardSize();
         root.setPrefSize(dimensions.width * tileSize,
                          dimensions.height * tileSize);
         root.getChildren().addAll(tileGroup, pieceGroup);
@@ -58,12 +61,12 @@ public class Game {
             }
         }
 
-        for(checkers.server.Piece piece:
-            new PieceIterable(engine.listPieces())) {
+        pieces = client.listPieces();
+        for(ClientPiece piece: pieces) {
+            piece.initialise(tileSize);
             final Point position = piece.getPosition();
-            final checkers.client.Piece uipiece = makePiece(piece);
-            board[position.x][position.y].setPiece(uipiece);
-            pieceGroup.getChildren().add(uipiece);
+            board[position.x][position.y].setPiece(piece);
+            pieceGroup.getChildren().add(piece);
         }
 
         return root;
@@ -139,67 +142,71 @@ public class Game {
      * @param y horizontal position of the piece
      * @return a new piece that is effect of the done move.
      */
-    private checkers.client.Piece makePiece(checkers.server.Piece serverPiece) {
-        checkers.client.Piece piece =
-            new checkers.client.Piece(serverPiece, tileSize);
+    // private checkers.client.Piece makePiece(checkers.server.Piece serverPiece) {
+    //     checkers.client.Piece piece =
+    //         new checkers.client.Piece(serverPiece, tileSize);
 
-        //      Here I will try to provide a light up tiles of possible moves for single piece
-        //        piece.setOnMouseEntered(e -> {
-        //            int x0 = toBoard(piece.getLayoutX());
-        //            int y0 = toBoard(piece.getLayoutY());
-        //
-        //            board[x0 + 1][y0 + 1].setFill(Color.BLUE);
-        //            board[x0 - 1][y0 + 1].setFill(Color.BLUE);
-        //        });
-        //
-        //        piece.setOnMouseExited(e -> {
-        //            int x0 = toBoard(piece.getLayoutX());
-        //            int y0 = toBoard(piece.getLayoutY());
-        //
-        //            board[x0 + 1][y0 + 1].setFill(Color.GREEN);
-        //            board[x0 - 1][y0 + 1].setFill(Color.GREEN);
-        //        });
+    //      Here I will try to provide a light up tiles of possible moves for single piece
+    //        piece.setOnMouseEntered(e -> {
+    //            int x0 = toBoard(piece.getLayoutX());
+    //            int y0 = toBoard(piece.getLayoutY());
+    //
+    //            board[x0 + 1][y0 + 1].setFill(Color.BLUE);
+    //            board[x0 - 1][y0 + 1].setFill(Color.BLUE);
+    //        });
+    //
+    //        piece.setOnMouseExited(e -> {
+    //            int x0 = toBoard(piece.getLayoutX());
+    //            int y0 = toBoard(piece.getLayoutY());
+    //
+    //            board[x0 + 1][y0 + 1].setFill(Color.GREEN);
+    //            board[x0 - 1][y0 + 1].setFill(Color.GREEN);
+    //        });
 
-        // piece.setOnMouseReleased(e -> {
-        //     int newX = toBoard(piece.getLayoutX());
-        //     int newY = toBoard(piece.getLayoutY());
+    // piece.setOnMouseReleased(e -> {
+    //     int newX = toBoard(piece.getLayoutX());
+    //     int newY = toBoard(piece.getLayoutY());
 
-        //     MoveResult result = tryMove(piece, newX, newY);
-        //     setKing(piece, newX, newY);
+    //     MoveResult result = tryMove(piece, newX, newY);
+    //     setKing(piece, newX, newY);
 
-        //     int x0 = toBoard(piece.getOldX());
-        //     int y0 = toBoard(piece.getOldY());
+    //     int x0 = toBoard(piece.getOldX());
+    //     int y0 = toBoard(piece.getOldY());
 
-        //     switch (result) {
-        //         case none -> piece.abortMove();
-        //         case normal -> {
-        //             piece.move(newX, newY);
-        //             board[x0][y0].setPiece(null);
-        //             board[newX][newY].setPiece(piece);
-        //         }
-        //         // Beating is now possible
-        //         case kill -> {
-        //             piece.move(newX, newY);
-        //             board[x0][y0].setPiece(null);
-        //             board[newX][newY].setPiece(piece);
+    //     switch (result) {
+    //         case none -> piece.abortMove();
+    //         case normal -> {
+    //             piece.move(newX, newY);
+    //             board[x0][y0].setPiece(null);
+    //             board[newX][newY].setPiece(piece);
+    //         }
+    //         // Beating is now possible
+    //         case kill -> {
+    //             piece.move(newX, newY);
+    //             board[x0][y0].setPiece(null);
+    //             board[newX][newY].setPiece(piece);
 
-        //             int beatenX = (x0 - newX) / 2;
-        //             int beatenY = (y0 - newY) / 2;
-        //             Piece beatenPiece = board[x0 - beatenX][y0 - beatenY].getPiece();
-        //             board[x0 - beatenX][y0 - beatenY].setPiece(null);
-        //             pieceGroup.getChildren().remove(beatenPiece);
-        //         }
-        //     }
-        // });
+    //             int beatenX = (x0 - newX) / 2;
+    //             int beatenY = (y0 - newY) / 2;
+    //             Piece beatenPiece = board[x0 - beatenX][y0 - beatenY].getPiece();
+    //             board[x0 - beatenX][y0 - beatenY].setPiece(null);
+    //             pieceGroup.getChildren().remove(beatenPiece);
+    //         }
+    //     }
+    // });
 
-        return piece;
-    }
+    //     return piece;
+    // }
 
-    public void run(checkers.server.Engine engine) {
-        server.setEngine(engine);
+    public void run() {
+        final boolean connected = client.connect();
+        if(!connected) {
+            // TODO: Handle error.
+            return;
+        }
 
         final Stage stage = new Stage();
-        Parent parent = createContent();
+        Parent parent = initialiseContent();
         Scene scene = new Scene(parent);
         stage.setTitle("Checkers");
         stage.setResizable(false);

@@ -1,4 +1,4 @@
-package checkers.server;
+package checkers;
 
 import java.lang.Iterable;
 import java.util.Iterator;

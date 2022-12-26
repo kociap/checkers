@@ -1,4 +1,4 @@
-package checkers.server;
+package checkers;
 
 public enum MoveResult {
     // Normal move.
