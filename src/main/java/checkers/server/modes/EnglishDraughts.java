@@ -2,7 +2,6 @@ package checkers.server;
 
 import checkers.Dimensions2D;
 import checkers.MoveCommand;
-import checkers.MoveResult;
 import checkers.Piece;
 import checkers.PieceIterator;
 import checkers.Point;
@@ -54,8 +53,8 @@ public class EnglishDraughts implements Engine {
         return new ArrayList<>();
     }
 
-    @Override
-    public MoveResult move(MoveCommand command) {
-        return MoveResult.illegal;
-    }
+    // @Override
+    // public MoveResult move(MoveCommand command) {
+    //     return MoveResult.illegal;
+    // }
 }

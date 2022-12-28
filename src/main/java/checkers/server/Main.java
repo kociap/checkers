@@ -1,12 +1,11 @@
-package checkers;
+package checkers.server;
 
 import javafx.application.Platform;
 
 public class Main {
     public static void main(String[] args) {
         Platform.startup(() -> {
-            checkers.server.Coordinator serverCoordinator =
-                new checkers.server.Coordinator();
+            Coordinator serverCoordinator = new Coordinator();
             serverCoordinator.run();
         });
     }

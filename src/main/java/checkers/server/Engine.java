@@ -2,7 +2,6 @@ package checkers.server;
 
 import checkers.Dimensions2D;
 import checkers.MoveCommand;
-import checkers.MoveResult;
 import checkers.Piece;
 import checkers.Point;
 import java.util.Iterator;
@@ -12,5 +11,5 @@ public interface Engine {
     Dimensions2D getBoardSize();
     Iterator<Piece> listPieces();
     List<Point> listMoves(Piece piece);
-    MoveResult move(MoveCommand command);
+    // MoveResult move(MoveCommand command);
 }

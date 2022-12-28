@@ -14,17 +14,29 @@ structure -> (integer[,integer]...)
 # hello
 # Issued when a client connects and the server accepts the connection.
 # The client must wait for hello before sending any data over the socket.
-hello;
+# Hello contains player information.
+hello player-color;
 # bye
 # Issued when the server closes or in a response to a client's bye.
 bye;
-promote piece-id;
+list-game-properties board-width,board-height;
 # list-pieces
 # piece is a structure of ID, kind, color, x, y.
 list-pieces piece[,piece]...;
+# list-moves
+# In response to the list-moves client command.
 list-moves move[,move]...;
-move result;
-list-game-properties board-width,board-height;
+# move
+# Response to the client move command or as an update when the other player
+# performs a valid move. When responding to a client, the command will contain
+# original position of a piece if the requested move could not be made.
+move piece-id,x,y;
+# take
+# After a move if a piece has been taken.
+take piece-id;
+# promote
+# After a move if a piece has been promoted.
+promote piece-id;
 # begin-turn
 # Issued only to the client whose turn has begun.
 begin-turn;

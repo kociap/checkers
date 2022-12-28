@@ -1,7 +1,6 @@
 package checkers.client;
 
 import checkers.Dimensions2D;
-import checkers.MoveResult;
 import checkers.Piece;
 import checkers.Point;
 import java.util.List;
@@ -85,7 +84,7 @@ public class Game {
      * @param newY horizontal position of piece after move was made
      * @return A tape of move that was made.
      */
-    private MoveResult tryMove(Piece piece, int newX, int newY) {
+    private void tryMove(Piece piece, int newX, int newY) {
         // if (board[newX][newY].hasPiece() || (newX + newY) % 2 == 0) {
         //     return MoveResult.none;
         // }
@@ -104,8 +103,6 @@ public class Game {
         //         return MoveResult.kill;
         //     }
         // }
-
-        return MoveResult.ok;
     }
 
     /**
@@ -199,8 +196,8 @@ public class Game {
     // }
 
     public void run() {
-        final boolean connected = client.connect();
-        if(!connected) {
+        final PlayerInformation player = client.connect();
+        if(player == null) {
             // TODO: Handle error.
             return;
         }

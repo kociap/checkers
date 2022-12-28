@@ -1,5 +1,7 @@
 package checkers.server;
 
+import checkers.CommandBuilder;
+import checkers.Piece;
 import checkers.SocketWrapper;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,8 +17,8 @@ public class Server {
     private ServerSocket socket;
     private final Coordinator coordinator;
 
-    private SocketWrapper client1;
-    private SocketWrapper client2;
+    private ClientThread threadClientRed;
+    private ClientThread threadClientWhite;
 
     public Server(Coordinator coordinator) {
         this.coordinator = coordinator;
@@ -33,12 +35,23 @@ public class Server {
 
     public void notifyEngineSelected(Engine engine) {
         this.engine = engine;
+        try {
+            // TODO: Move to thread;
+            SocketWrapper clientRed = new SocketWrapper(socket.accept());
+            sendHello(clientRed, Piece.Color.red);
+            threadClientRed = new ClientThread(this, clientRed);
+            threadClientRed.start();
+            coordinator.notifyClientConnected();
+            // clientWhite = new SocketWrapper(socket.accept());
+            // sendHello(clientWhite, Piece.Color.white);
+            // coordinator.notifyClientConnected();
+        } catch(Exception e) {}
+    }
 
-        // TODO: Move to thread;
-        client1 = new SocketWrapper(socket.accept());
-        coordinator.notifyClientConnected();
-        client2 = new SocketWrapper(socket.accept());
-        coordinator.notifyClientConnected();
-        } catch(Exception e) { return false; }
+    private void sendHello(SocketWrapper client, Piece.Color color) {
+        final PrintWriter writer = client.getWriter();
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("hello").parameter(color);
+        writer.format(builder.finalise());
     }
 }
