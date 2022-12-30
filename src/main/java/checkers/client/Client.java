@@ -6,9 +6,6 @@ import checkers.Piece;
 import checkers.PieceIterator;
 import checkers.Point;
 import checkers.SocketWrapper;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,9 +17,11 @@ public class Client {
     public PlayerInformation connect() {
         try {
             server = new SocketWrapper(new Socket("localhost", 8080));
-        } catch(Exception e) { return null; }
+        } catch(Exception e) {
+            return null;
+        }
 
-        final String response = read();
+        final String response = server.read();
         if(response == null) {
             return null;
         }
@@ -38,9 +37,8 @@ public class Client {
     }
 
     public List<ClientPiece> listPieces() {
-        final PrintWriter writer = server.getWriter();
-        writer.format("list-pieces;");
-        final String response = read();
+        server.write("list-pieces;");
+        final String response = server.read();
         if(response == null) {
             return null;
         }
@@ -88,9 +86,8 @@ public class Client {
     }
 
     public Dimensions2D getBoardSize() {
-        final PrintWriter writer = server.getWriter();
-        writer.format("list-game-properties;");
-        final String response = read();
+        server.write("list-game-properties;");
+        final String response = server.read();
         if(response == null) {
             return null;
         }
@@ -105,12 +102,5 @@ public class Client {
         parser.match(",");
         final int height = parser.matchInteger();
         return new Dimensions2D(width, height);
-    }
-
-    private String read() {
-        final BufferedReader reader = server.getReader();
-        try {
-            return reader.readLine();
-        } catch(Exception e) { return null; }
     }
 }

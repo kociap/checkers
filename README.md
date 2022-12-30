@@ -17,7 +17,7 @@ structure -> (integer[,integer]...)
 # Hello contains player information.
 hello player-color;
 # bye
-# Issued when the server closes or in a response to a client's bye.
+# Issued when the server closes.
 bye;
 list-game-properties board-width,board-height;
 # list-pieces

@@ -2,24 +2,24 @@ package checkers.server;
 
 import checkers.CommandBuilder;
 import checkers.CommandParser;
-import checkers.SocketWrapper;
+import checkers.Piece;
 import checkers.PieceIterable;
+import checkers.SocketWrapper;
+import java.util.Iterator;
 
 public class ClientThread extends Thread {
     private Server server;
     private SocketWrapper socket;
-    
+
     public ClientThread(Server server, SocketWrapper socket) {
-        this.server =server;
+        this.server = server;
         this.socket = socket;
     }
 
     @Override
     public void run() {
-        final BufferedReader reader = socket.getReader();
-        final PrintWriter writer = socket.getWriter();
         while(true) {
-            final String line = reader.readLine();
+            final String line = socket.read();
             if(line == null) {
                 break;
             }
@@ -28,17 +28,19 @@ public class ClientThread extends Thread {
 
             if(parser.match("list-pieces")) {
                 final String command = getListPiecesCommand();
-                writer.format(command);
+                socket.write(command);
             }
         }
+    }
+
+    public void sendCommand(String command) {
+        socket.write(command);
     }
 
     private String getListPiecesCommand() {
         final CommandBuilder builder = new CommandBuilder();
         builder.command("list-pieces");
-        // TODO: Get pieces.
-        Iterator<Piece> iterator;
-        for(Piece p: new PieceIterable(iterator)) {
+        for(Piece p: new PieceIterable(server.listPieces())) {
             builder.parameter(p);
         }
         return builder.finalise();

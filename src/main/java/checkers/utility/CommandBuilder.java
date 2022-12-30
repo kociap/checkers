@@ -1,9 +1,10 @@
 package checkers;
 
 import checkers.Piece;
+// import 
 
 public class CommandBuilder {
-    private StringBuilder builder;
+    private StringBuilder builder = new StringBuilder();
     private boolean startedParameters = false;
 
     public CommandBuilder command(String command) {

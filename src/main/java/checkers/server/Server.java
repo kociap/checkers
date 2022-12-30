@@ -1,13 +1,16 @@
 package checkers.server;
 
+import checkers.Dimensions2D;
+import java.util.Iterator;
+import java.util.List;
+import checkers.Point;
 import checkers.CommandBuilder;
 import checkers.Piece;
 import checkers.SocketWrapper;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 // Server
 // Listens on localhost port 8080.
@@ -15,10 +18,12 @@ import java.net.Socket;
 public class Server {
     private Engine engine;
     private ServerSocket socket;
-    private final Coordinator coordinator;
+    private Coordinator coordinator;
 
-    private ClientThread threadClientRed;
-    private ClientThread threadClientWhite;
+    private ClientThread clientRed;
+    private ClientThread clientWhite;
+
+    private Lock engineLock = new ReentrantLock();
 
     public Server(Coordinator coordinator) {
         this.coordinator = coordinator;
@@ -28,7 +33,9 @@ public class Server {
         try {
             // TODO: Hardcoded port.
             socket = new ServerSocket(8080);
-        } catch(Exception e) { return false; }
+        } catch(Exception e) {
+            return false;
+        }
 
         return true;
     }
@@ -37,21 +44,55 @@ public class Server {
         this.engine = engine;
         try {
             // TODO: Move to thread;
-            SocketWrapper clientRed = new SocketWrapper(socket.accept());
+            clientRed =
+                new ClientThread(this, new SocketWrapper(socket.accept()));
+            clientRed.start();
             sendHello(clientRed, Piece.Color.red);
-            threadClientRed = new ClientThread(this, clientRed);
-            threadClientRed.start();
             coordinator.notifyClientConnected();
             // clientWhite = new SocketWrapper(socket.accept());
             // sendHello(clientWhite, Piece.Color.white);
             // coordinator.notifyClientConnected();
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            return;
+        }
     }
 
-    private void sendHello(SocketWrapper client, Piece.Color color) {
-        final PrintWriter writer = client.getWriter();
+    public Dimensions2D getBoardSize() {
+        engineLock.lock();
+        try {
+            return engine.getBoardSize();
+        } catch(Exception e) {
+            return null;
+        } finally {
+            engineLock.unlock();
+        }
+    }
+
+    public Iterator<Piece> listPieces() {
+        engineLock.lock();
+        try {
+            return engine.listPieces();
+        } catch(Exception e) {
+            return null;
+        } finally {
+            engineLock.unlock();
+        }
+    }
+
+    public List<Point> listMoves(Piece piece) {
+        engineLock.lock();
+        try {
+            return engine.listMoves(piece);
+        } catch(Exception e) {
+            return null;
+        } finally {
+            engineLock.unlock();
+        }
+    }
+
+    private void sendHello(ClientThread client, Piece.Color color) {
         final CommandBuilder builder = new CommandBuilder();
         builder.command("hello").parameter(color);
-        writer.format(builder.finalise());
+        client.sendCommand(builder.finalise());
     }
 }
