@@ -1,14 +1,12 @@
 package checkers.client;
 
-import checkers.CommandParser;
-import checkers.Dimensions2D;
+import checkers.utility.CommandParser;
+import checkers.utility.Dimensions2D;
 import checkers.Piece;
-import checkers.PieceIterator;
-import checkers.Point;
-import checkers.SocketWrapper;
+import checkers.utility.Point;
+import checkers.utility.SocketWrapper;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Client {

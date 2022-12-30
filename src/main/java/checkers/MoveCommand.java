@@ -1,6 +1,6 @@
 package checkers;
 
-import checkers.Point;
+import checkers.utility.Point;
 
 public class MoveCommand {
     public Piece piece;

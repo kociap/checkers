@@ -1,4 +1,4 @@
-package checkers;
+package checkers.utility;
 
 import checkers.Piece;
 // import 

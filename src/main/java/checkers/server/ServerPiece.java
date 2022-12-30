@@ -1,7 +1,7 @@
 package checkers.server;
 
 import checkers.Piece;
-import checkers.Point;
+import checkers.utility.Point;
 
 public class ServerPiece implements Piece {
     private int ID;

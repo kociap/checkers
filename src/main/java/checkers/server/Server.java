@@ -1,14 +1,13 @@
 package checkers.server;
 
-import checkers.Dimensions2D;
+import checkers.utility.Dimensions2D;
 import java.util.Iterator;
 import java.util.List;
-import checkers.Point;
-import checkers.CommandBuilder;
+import checkers.utility.Point;
+import checkers.utility.CommandBuilder;
 import checkers.Piece;
-import checkers.SocketWrapper;
+import checkers.utility.SocketWrapper;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

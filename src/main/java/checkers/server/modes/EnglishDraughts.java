@@ -1,10 +1,11 @@
-package checkers.server;
+package checkers.server.modes;
 
-import checkers.Dimensions2D;
-import checkers.MoveCommand;
+import checkers.server.Engine;
+import checkers.server.ServerPiece;
+import checkers.utility.Dimensions2D;
 import checkers.Piece;
 import checkers.PieceIterator;
-import checkers.Point;
+import checkers.utility.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

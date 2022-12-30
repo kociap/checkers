@@ -1,4 +1,4 @@
-package checkers;
+package checkers.utility;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

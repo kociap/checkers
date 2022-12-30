@@ -1,4 +1,4 @@
-package checkers;
+package checkers.utility;
 
 public class Dimensions2D {
     public int width;

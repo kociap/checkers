@@ -1,10 +1,8 @@
 package checkers.client;
 
 import checkers.Piece;
-import checkers.Point;
-import javafx.geometry.Pos;
+import checkers.utility.Point;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
 public class ClientPiece extends StackPane implements Piece {

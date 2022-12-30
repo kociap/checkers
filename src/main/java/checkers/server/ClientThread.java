@@ -1,11 +1,10 @@
 package checkers.server;
 
-import checkers.CommandBuilder;
-import checkers.CommandParser;
+import checkers.utility.CommandBuilder;
+import checkers.utility.CommandParser;
 import checkers.Piece;
 import checkers.PieceIterable;
-import checkers.SocketWrapper;
-import java.util.Iterator;
+import checkers.utility.SocketWrapper;
 
 public class ClientThread extends Thread {
     private Server server;

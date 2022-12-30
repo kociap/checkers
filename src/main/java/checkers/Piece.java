@@ -1,6 +1,6 @@
 package checkers;
 
-import checkers.Point;
+import checkers.utility.Point;
 
 public interface Piece {
     public enum Kind {

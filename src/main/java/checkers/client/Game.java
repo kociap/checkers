@@ -1,16 +1,14 @@
 package checkers.client;
 
-import checkers.Dimensions2D;
+import checkers.utility.Dimensions2D;
 import checkers.Piece;
-import checkers.Point;
+import checkers.utility.Point;
 import java.util.List;
-import javafx.geometry.Pos;
+
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
