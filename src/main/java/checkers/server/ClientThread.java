@@ -1,9 +1,10 @@
 package checkers.server;
 
-import checkers.utility.CommandBuilder;
-import checkers.utility.CommandParser;
 import checkers.Piece;
 import checkers.PieceIterable;
+import checkers.utility.CommandBuilder;
+import checkers.utility.CommandParser;
+import checkers.utility.Dimensions2D;
 import checkers.utility.SocketWrapper;
 
 public class ClientThread extends Thread {
@@ -28,7 +29,16 @@ public class ClientThread extends Thread {
             if(parser.match("list-pieces")) {
                 final String command = getListPiecesCommand();
                 socket.write(command);
+                continue;
             }
+
+            if(parser.match("list-game-properties")) {
+                final String command = getListGamePropertiesCommand();
+                socket.write(command);
+                continue;
+            }
+
+            System.out.println("unknown command \"" + line + "\"");
         }
     }
 
@@ -42,6 +52,14 @@ public class ClientThread extends Thread {
         for(Piece p: new PieceIterable(server.listPieces())) {
             builder.parameter(p);
         }
+        return builder.finalise();
+    }
+
+    private String getListGamePropertiesCommand() {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-game-properties");
+        final Dimensions2D boardSize = server.getBoardSize();
+        builder.parameter(boardSize.width).parameter(boardSize.height);
         return builder.finalise();
     }
 }

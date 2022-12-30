@@ -1,10 +1,9 @@
 package checkers.client;
 
-import checkers.utility.Dimensions2D;
 import checkers.Piece;
+import checkers.utility.Dimensions2D;
 import checkers.utility.Point;
 import java.util.List;
-
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

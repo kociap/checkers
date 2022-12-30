@@ -1,7 +1,7 @@
 package checkers.utility;
 
 import checkers.Piece;
-// import 
+// import
 
 public class CommandBuilder {
     private StringBuilder builder = new StringBuilder();
@@ -56,9 +56,9 @@ public class CommandBuilder {
         builder.append("(")
             .append(value.getID())
             .append(",")
-            .append(value.getKind())
+            .append(value.getKind().ordinal())
             .append(",")
-            .append(value.getColor())
+            .append(value.getColor().ordinal())
             .append(",")
             .append(position.x)
             .append(",")
@@ -68,7 +68,7 @@ public class CommandBuilder {
     }
 
     public String finalise() {
-        builder.append(";");
+        builder.append(";\n");
         return builder.toString();
     }
 }

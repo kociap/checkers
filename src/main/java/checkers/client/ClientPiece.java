@@ -8,13 +8,13 @@ import javafx.scene.shape.Ellipse;
 public class ClientPiece extends StackPane implements Piece {
     private double mouseOffsetX;
     private double mouseOffsetY;
-    private Point lastPosition;
+    private Point lastPosition = new Point(0, 0);
     private int size;
 
     private int ID;
     private Piece.Kind kind;
     private Piece.Color color;
-    private Point position;
+    private Point position = new Point(0, 0);
 
     @Override
     public int getID() {

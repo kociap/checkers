@@ -1,8 +1,9 @@
 package checkers.client;
 
+import checkers.Piece;
+import checkers.utility.CommandBuilder;
 import checkers.utility.CommandParser;
 import checkers.utility.Dimensions2D;
-import checkers.Piece;
 import checkers.utility.Point;
 import checkers.utility.SocketWrapper;
 import java.net.Socket;
@@ -35,7 +36,9 @@ public class Client {
     }
 
     public List<ClientPiece> listPieces() {
-        server.write("list-pieces;");
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-pieces");
+        server.write(builder.finalise());
         final String response = server.read();
         if(response == null) {
             return null;
@@ -84,7 +87,9 @@ public class Client {
     }
 
     public Dimensions2D getBoardSize() {
-        server.write("list-game-properties;");
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-game-properties");
+        server.write(builder.finalise());
         final String response = server.read();
         if(response == null) {
             return null;

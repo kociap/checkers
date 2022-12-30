@@ -1,8 +1,9 @@
 package checkers.utility;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SocketWrapper {
     private Socket socket;
     private BufferedReader reader;
-    private PrintWriter writer;
+    private BufferedWriter writer;
     private Lock readerLock = new ReentrantLock();
     private Lock writerLock = new ReentrantLock();
 
@@ -18,7 +19,8 @@ public class SocketWrapper {
         this.socket = socket;
         reader =
             new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        writer = new PrintWriter(socket.getOutputStream(), true);
+        writer = new BufferedWriter(
+            new OutputStreamWriter(socket.getOutputStream()));
     }
 
     public String read() {
