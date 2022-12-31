@@ -8,6 +8,6 @@ import java.util.List;
 public interface Engine {
     Dimensions2D getBoardSize();
     Iterable<Piece> listPieces();
-    List<Point> listMoves(Piece piece);
+    List<Point> listMoves(int pieceID);
     // MoveResult move(MoveCommand command);
 }

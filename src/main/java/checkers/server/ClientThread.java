@@ -5,6 +5,7 @@ import checkers.utility.CommandBuilder;
 import checkers.utility.CommandParser;
 import checkers.utility.Dimensions2D;
 import checkers.utility.PieceIterable;
+import checkers.utility.Point;
 import checkers.utility.SocketWrapper;
 
 public class ClientThread extends Thread {
@@ -38,6 +39,13 @@ public class ClientThread extends Thread {
                 continue;
             }
 
+            if(parser.match("list-moves")) {
+                final int pieceID = parser.matchInteger();
+                final String command = getListMovesCommand(pieceID);
+                socket.write(command);
+                continue;
+            }
+
             System.out.println("unknown command \"" + line + "\"");
         }
     }
@@ -60,6 +68,15 @@ public class ClientThread extends Thread {
         builder.command("list-game-properties");
         final Dimensions2D boardSize = server.getBoardSize();
         builder.parameter(boardSize.width).parameter(boardSize.height);
+        return builder.finalise();
+    }
+
+    private String getListMovesCommand(int pieceID) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-moves");
+        for(Point p: server.listMoves(pieceID)) {
+            builder.parameter(p);
+        }
         return builder.finalise();
     }
 }

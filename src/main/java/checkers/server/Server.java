@@ -78,10 +78,10 @@ public class Server {
         }
     }
 
-    public List<Point> listMoves(Piece piece) {
+    public List<Point> listMoves(int pieceID) {
         engineLock.lock();
         try {
-            return engine.listMoves(piece);
+            return engine.listMoves(pieceID);
         } catch(Exception e) {
             return null;
         } finally {

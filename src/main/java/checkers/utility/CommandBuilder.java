@@ -45,6 +45,19 @@ public class CommandBuilder {
         return this;
     }
 
+    public CommandBuilder parameter(Point value) {
+        if(startedParameters) {
+            builder.append(",");
+        } else {
+            startedParameters = true;
+            builder.append(" ");
+        }
+        builder.append("(");
+        builder.append(value.x).append(",").append(value.y);
+        builder.append(")");
+        return this;
+    }
+
     public CommandBuilder parameter(Piece value) {
         if(startedParameters) {
             builder.append(",");
