@@ -49,7 +49,7 @@ public class ClientThread extends Thread {
     private String getListPiecesCommand() {
         final CommandBuilder builder = new CommandBuilder();
         builder.command("list-pieces");
-        for(Piece p: new PieceIterable(server.listPieces())) {
+        for(Piece p: server.listPieces()) {
             builder.parameter(p);
         }
         return builder.finalise();

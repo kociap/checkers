@@ -4,10 +4,10 @@ import checkers.Piece;
 import checkers.server.Engine;
 import checkers.server.ServerPiece;
 import checkers.utility.Dimensions2D;
+import checkers.utility.PieceIterable;
 import checkers.utility.PieceIterator;
 import checkers.utility.Point;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class EnglishDraughts implements Engine {
@@ -45,8 +45,9 @@ public class EnglishDraughts implements Engine {
     }
 
     @Override
-    public Iterator<Piece> listPieces() {
-        return new PieceIterator<>(pieces.iterator());
+    public Iterable<Piece> listPieces() {
+        return new PieceIterable(
+            new PieceIterator<ServerPiece>(pieces.iterator()));
     }
 
     @Override

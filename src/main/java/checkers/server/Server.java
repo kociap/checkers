@@ -67,7 +67,7 @@ public class Server {
         }
     }
 
-    public Iterator<Piece> listPieces() {
+    public Iterable<Piece> listPieces() {
         engineLock.lock();
         try {
             return engine.listPieces();
