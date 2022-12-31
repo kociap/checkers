@@ -1,5 +1,6 @@
-package checkers;
+package checkers.utility;
 
+import checkers.Piece;
 import java.util.Iterator;
 
 public class PieceIterator<T extends Piece> implements Iterator<Piece> {

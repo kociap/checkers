@@ -1,5 +1,6 @@
-package checkers;
+package checkers.utility;
 
+import checkers.Piece;
 import java.lang.Iterable;
 import java.util.Iterator;
 

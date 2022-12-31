@@ -1,10 +1,10 @@
 package checkers.server;
 
 import checkers.Piece;
-import checkers.PieceIterable;
 import checkers.utility.CommandBuilder;
 import checkers.utility.CommandParser;
 import checkers.utility.Dimensions2D;
+import checkers.utility.PieceIterable;
 import checkers.utility.SocketWrapper;
 
 public class ClientThread extends Thread {
