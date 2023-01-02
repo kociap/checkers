@@ -28,21 +28,28 @@ public class ClientThread extends Thread {
             final CommandParser parser = new CommandParser(line);
 
             if(parser.match("list-pieces")) {
-                final String command = getListPiecesCommand();
-                socket.write(command);
+                server.notifyCommandListPieces(this);
                 continue;
             }
 
             if(parser.match("list-game-properties")) {
-                final String command = getListGamePropertiesCommand();
-                socket.write(command);
+                server.notifyCommandListGameProperties(this);
                 continue;
             }
 
             if(parser.match("list-moves")) {
                 final int pieceID = parser.matchInteger();
-                final String command = getListMovesCommand(pieceID);
-                socket.write(command);
+                server.notifyCommandListMoves(this, pieceID);
+                continue;
+            }
+
+            if(parser.match("move")) {
+                final int pieceID = parser.matchInteger();
+                parser.match(",");
+                final int x = parser.matchInteger();
+                parser.match(",");
+                final int y = parser.matchInteger();
+                server.notifyCommandMove(this, pieceID, x, y);
                 continue;
             }
 
@@ -52,31 +59,5 @@ public class ClientThread extends Thread {
 
     public void sendCommand(String command) {
         socket.write(command);
-    }
-
-    private String getListPiecesCommand() {
-        final CommandBuilder builder = new CommandBuilder();
-        builder.command("list-pieces");
-        for(Piece p: server.listPieces()) {
-            builder.parameter(p);
-        }
-        return builder.finalise();
-    }
-
-    private String getListGamePropertiesCommand() {
-        final CommandBuilder builder = new CommandBuilder();
-        builder.command("list-game-properties");
-        final Dimensions2D boardSize = server.getBoardSize();
-        builder.parameter(boardSize.width).parameter(boardSize.height);
-        return builder.finalise();
-    }
-
-    private String getListMovesCommand(int pieceID) {
-        final CommandBuilder builder = new CommandBuilder();
-        builder.command("list-moves");
-        for(Point p: server.listMoves(pieceID)) {
-            builder.parameter(p);
-        }
-        return builder.finalise();
     }
 }

@@ -1,5 +1,6 @@
 package checkers.server;
 
+import checkers.MoveCommand;
 import checkers.Piece;
 import checkers.utility.CommandBuilder;
 import checkers.utility.Dimensions2D;
@@ -43,10 +44,10 @@ public class Server {
         this.engine = engine;
         try {
             // TODO: Move to thread;
-            clientRed =
+            clientWhite =
                 new ClientThread(this, new SocketWrapper(socket.accept()));
-            clientRed.start();
-            sendHello(clientRed, Piece.Color.red);
+            clientWhite.start();
+            sendHello(clientWhite, Piece.Color.white);
             coordinator.notifyClientConnected();
             // clientWhite = new SocketWrapper(socket.accept());
             // sendHello(clientWhite, Piece.Color.white);
@@ -56,42 +57,141 @@ public class Server {
         }
     }
 
-    public Dimensions2D getBoardSize() {
+    public void notifyCommandListGameProperties(final ClientThread client) {
+        sendListGameProperties(client);
+    }
+
+    public void notifyCommandListPieces(final ClientThread client) {
+        sendListPieces(client);
+    }
+
+    public void notifyCommandListMoves(final ClientThread client,
+                                       final int pieceID) {
+        sendListMoves(client, pieceID);
+    }
+
+    public void notifyCommandMove(final ClientThread client, final int pieceID,
+                                  final int x, final int y) {
         engineLock.lock();
         try {
-            return engine.getBoardSize();
+            final MoveResult result =
+                engine.move(new MoveCommand(pieceID, new Point(x, y)));
+            if(result == null) {
+                sendMove(client, 0, 0, 0);
+                return;
+            }
+
+            sendMove(clientWhite, pieceID, result.position.x,
+                     result.position.y);
+            // sendMove(clientRed, pieceID, result.position.x, result.position.y);
+            if(result.takenID != Piece.noneID) {
+                sendTake(clientWhite, pieceID);
+                // sendTake(clientRed, pieceID);
+            }
+
+            if(result.promoted) {
+                sendPromote(clientWhite, pieceID);
+                // sendPromote(clientRed, pieceID);
+            }
+
+            if(result.endTurn) {
+                final Piece.Color color = engine.getCurrentColor();
+                if(color == Piece.Color.white) {
+                    // sendEndTurn(clientRed);
+                    sendBeginTurn(clientWhite);
+                } else {
+                    sendEndTurn(clientWhite);
+                    // sendBeginTurn(clientRed);
+                }
+            }
         } catch(Exception e) {
-            return null;
+            // Nothing.
         } finally {
             engineLock.unlock();
         }
     }
 
-    public Iterable<Piece> listPieces() {
-        engineLock.lock();
-        try {
-            return engine.listPieces();
-        } catch(Exception e) {
-            return null;
-        } finally {
-            engineLock.unlock();
-        }
+    private void sendMove(final ClientThread client, final int pieceID,
+                          final int x, final int y) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("move").parameter(pieceID).parameter(x).parameter(y);
+        client.sendCommand(builder.finalise());
     }
 
-    public List<Point> listMoves(int pieceID) {
-        engineLock.lock();
-        try {
-            return engine.listMoves(pieceID);
-        } catch(Exception e) {
-            return null;
-        } finally {
-            engineLock.unlock();
-        }
+    private void sendTake(final ClientThread client, final int pieceID) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("take").parameter(pieceID);
+        client.sendCommand(builder.finalise());
     }
 
-    private void sendHello(ClientThread client, Piece.Color color) {
+    private void sendPromote(final ClientThread client, final int pieceID) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("promote").parameter(pieceID);
+        client.sendCommand(builder.finalise());
+    }
+
+    private void sendBeginTurn(final ClientThread client) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("begin-turn");
+        client.sendCommand(builder.finalise());
+    }
+
+    private void sendEndTurn(final ClientThread client) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("end-turn");
+        client.sendCommand(builder.finalise());
+    }
+
+    private void sendHello(final ClientThread client, final Piece.Color color) {
         final CommandBuilder builder = new CommandBuilder();
         builder.command("hello").parameter(color);
+        client.sendCommand(builder.finalise());
+    }
+
+    private void sendListGameProperties(final ClientThread client) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-game-properties");
+        engineLock.lock();
+        try {
+            final Dimensions2D boardSize = engine.getBoardSize();
+            builder.parameter(boardSize.width).parameter(boardSize.height);
+        } catch(Exception e) {
+            // Nothing.
+        } finally {
+            engineLock.unlock();
+        }
+        client.sendCommand(builder.finalise());
+    }
+
+    private void sendListPieces(final ClientThread client) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-pieces");
+        engineLock.lock();
+        try {
+            for(Piece p: engine.listPieces()) {
+                builder.parameter(p);
+            }
+        } catch(Exception e) {
+            // Nothing.
+        } finally {
+            engineLock.unlock();
+        }
+        client.sendCommand(builder.finalise());
+    }
+
+    private void sendListMoves(final ClientThread client, final int pieceID) {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-moves");
+        engineLock.lock();
+        try {
+            for(Point p: engine.listMoves(pieceID)) {
+                builder.parameter(p);
+            }
+        } catch(Exception e) {
+            // Nothing.
+        } finally {
+            engineLock.unlock();
+        }
         client.sendCommand(builder.finalise());
     }
 }
