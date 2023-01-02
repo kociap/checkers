@@ -13,7 +13,7 @@ public interface Piece {
 
     public enum Color {
         white,
-        red,
+        black,
     }
 
     public static int noneID = 0;

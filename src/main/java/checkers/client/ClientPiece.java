@@ -72,8 +72,9 @@ public class ClientPiece extends StackPane implements Piece {
         background.setTranslateX((size - size * 0.3125 * 2) / 2);
         background.setTranslateY((size - size * 0.26 * 2) / 2 + size * 0.07);
 
+        // TODO: Consider making black pieces black with white outline.
         Ellipse ellipse = new Ellipse(size * 0.3125, size * 0.26);
-        if(color == Piece.Color.red) {
+        if(color == Piece.Color.black) {
             ellipse.setFill(javafx.scene.paint.Color.RED);
         } else if(color == Piece.Color.white) {
             ellipse.setFill(javafx.scene.paint.Color.WHITE);

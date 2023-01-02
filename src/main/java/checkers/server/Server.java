@@ -20,7 +20,7 @@ public class Server {
     private ServerSocket socket;
     private Coordinator coordinator;
 
-    private ClientThread clientRed;
+    private ClientThread clientBlack;
     private ClientThread clientWhite;
 
     private Lock engineLock = new ReentrantLock();
@@ -83,25 +83,25 @@ public class Server {
 
             sendMove(clientWhite, pieceID, result.position.x,
                      result.position.y);
-            // sendMove(clientRed, pieceID, result.position.x, result.position.y);
+            // sendMove(clientBlack, pieceID, result.position.x, result.position.y);
             if(result.takenID != Piece.noneID) {
                 sendTake(clientWhite, pieceID);
-                // sendTake(clientRed, pieceID);
+                // sendTake(clientBlack, pieceID);
             }
 
             if(result.promoted) {
                 sendPromote(clientWhite, pieceID);
-                // sendPromote(clientRed, pieceID);
+                // sendPromote(clientBlack, pieceID);
             }
 
             if(result.endTurn) {
                 final Piece.Color color = engine.getCurrentColor();
                 if(color == Piece.Color.white) {
-                    // sendEndTurn(clientRed);
+                    // sendEndTurn(clientBlack);
                     sendBeginTurn(clientWhite);
                 } else {
                     sendEndTurn(clientWhite);
-                    // sendBeginTurn(clientRed);
+                    // sendBeginTurn(clientBlack);
                 }
             }
         } catch(Exception e) {

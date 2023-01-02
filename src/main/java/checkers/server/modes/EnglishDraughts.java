@@ -42,12 +42,12 @@ public class EnglishDraughts implements Engine {
             }
         }
 
-        // Initialize the red pieces on the board.
+        // Initialize the black pieces on the board.
         for(int y = size.height - 1; y >= size.height - 3; --y) {
             for(int x = 0; x < size.width; x += 2) {
                 pieces.add(new ServerPiece(pieceID,
                                            new Point(x + (y + 1) % 2, y),
-                                           Piece.Color.red, Piece.Kind.pawn));
+                                           Piece.Color.black, Piece.Kind.pawn));
                 pieceID += 1;
             }
         }
@@ -228,7 +228,7 @@ public class EnglishDraughts implements Engine {
         final boolean whiteInOpponent =
             color == Piece.Color.white && (position.y == size.height - 1);
         final boolean blackInOpponent =
-            color == Piece.Color.red && (position.y == 0);
+            color == Piece.Color.black && (position.y == 0);
         return whiteInOpponent || blackInOpponent;
     }
 
@@ -261,7 +261,7 @@ public class EnglishDraughts implements Engine {
 
     private void endTurn() {
         if(currentColor == Piece.Color.white) {
-            currentColor = Piece.Color.red;
+            currentColor = Piece.Color.black;
         } else {
             currentColor = Piece.Color.white;
         }
