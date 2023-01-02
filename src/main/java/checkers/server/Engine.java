@@ -1,6 +1,5 @@
 package checkers.server;
 
-import checkers.MoveCommand;
 import checkers.Piece;
 import checkers.utility.Dimensions2D;
 import checkers.utility.Point;
@@ -14,6 +13,6 @@ public interface Engine {
     Dimensions2D getBoardSize();
     Iterable<Piece> listPieces();
     List<Point> listMoves(int pieceID);
-    MoveResult move(MoveCommand command);
+    MoveResult move(int pieceID, Point position);
     Piece.Color getCurrentColor();
 }

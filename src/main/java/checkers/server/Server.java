@@ -1,6 +1,5 @@
 package checkers.server;
 
-import checkers.MoveCommand;
 import checkers.Piece;
 import checkers.utility.CommandBuilder;
 import checkers.utility.Dimensions2D;
@@ -73,7 +72,7 @@ public class Server {
         engineLock.lock();
         try {
             final MoveResult result =
-                engine.move(new MoveCommand(pieceID, new Point(x, y)));
+                engine.move(pieceID, new Point(x, y));
             if(result == null) {
                 sendMove(client, 0, 0, 0);
                 return;

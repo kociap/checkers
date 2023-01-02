@@ -1,6 +1,5 @@
 package checkers.server.modes;
 
-import checkers.MoveCommand;
 import checkers.Piece;
 import checkers.server.Engine;
 import checkers.server.MoveResult;
@@ -85,8 +84,8 @@ public class EnglishDraughts implements Engine {
     }
 
     @Override
-    public MoveResult move(final MoveCommand command) {
-        final ServerPiece piece = findPieceByID(command.pieceID);
+    public MoveResult move(final int pieceID, final Point position) {
+        final ServerPiece piece = findPieceByID(pieceID);
         if(piece == null) {
             return null;
         }
@@ -104,7 +103,7 @@ public class EnglishDraughts implements Engine {
             internalListMoves(piece, hasMandatoryTake());
         InternalMove validMove = null;
         for(final InternalMove im: moves) {
-            if(im.position.equals(command.position)) {
+            if(im.position.equals(position)) {
                 validMove = im;
                 break;
             }
