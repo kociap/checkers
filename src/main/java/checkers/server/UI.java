@@ -11,10 +11,10 @@ import javafx.stage.Stage;
 
 public class UI {
     private final Stage window = new Stage();
-    private final Coordinator coordinator;
+    private final Server server;
 
-    public UI(Coordinator coordinator) {
-        this.coordinator = coordinator;
+    public UI(Server server) {
+        this.server = server;
     }
 
     public void show() {
@@ -23,21 +23,21 @@ public class UI {
 
         Button button8x8 = new Button("English Draughts 8x8 game");
         button8x8.setOnAction(e -> {
-            coordinator.notifyEngineSelected(
+            server.notifyEngineSelected(
                 new EnglishDraughts(new Dimensions2D(8, 8)));
             setViewWaitingForClientsToConnect();
         });
 
         Button button10x10 = new Button("English Draughts 10x10 game");
         button10x10.setOnAction(e -> {
-            coordinator.notifyEngineSelected(
+            server.notifyEngineSelected(
                 new EnglishDraughts(new Dimensions2D(10, 10)));
             setViewWaitingForClientsToConnect();
         });
 
         Button button12x12 = new Button("English Draughts 12x12 game");
         button12x12.setOnAction(e -> {
-            coordinator.notifyEngineSelected(
+            server.notifyEngineSelected(
                 new EnglishDraughts(new Dimensions2D(12, 12)));
             setViewWaitingForClientsToConnect();
         });

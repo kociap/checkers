@@ -18,16 +18,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Server {
     private Engine engine;
     private ServerSocket socket;
-    private Coordinator coordinator;
+    private UI ui = new UI(this);
 
     private ClientThread clientBlack;
     private ClientThread clientWhite;
 
     private Lock engineLock = new ReentrantLock();
-
-    public Server(Coordinator coordinator) {
-        this.coordinator = coordinator;
-    }
 
     public boolean run() {
         try {
@@ -36,6 +32,8 @@ public class Server {
         } catch(Exception e) {
             return false;
         }
+
+        ui.show();
 
         return true;
     }
@@ -48,10 +46,10 @@ public class Server {
                 new ClientThread(this, new SocketWrapper(socket.accept()));
             clientWhite.start();
             sendHello(clientWhite, Piece.Color.white);
-            coordinator.notifyClientConnected();
+            ui.notifyClientConnected();
             // clientWhite = new SocketWrapper(socket.accept());
             // sendHello(clientWhite, Piece.Color.white);
-            // coordinator.notifyClientConnected();
+            // ui.notifyClientConnected();
         } catch(Exception e) {
             return;
         }
