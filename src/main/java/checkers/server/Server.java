@@ -14,6 +14,10 @@ import java.util.concurrent.locks.ReentrantLock;
 // Server
 // Listens on localhost port 8080.
 //
+// TODO: The server needs to be rewritten, so that it uses an event queue
+//       to receive commands from the clients, due to the UI code having to run
+//       on the main thread.
+//
 public class Server {
     private Engine engine;
     private ServerSocket socket;
@@ -54,25 +58,36 @@ public class Server {
         }
     }
 
+    // notifyCommandListGameProperties
+    // Notify the server a list-game-properties command has been received.
+    //
     public void notifyCommandListGameProperties(final ClientThread client) {
         sendListGameProperties(client);
     }
 
+    // notifyCommandListGameProperties
+    // Notify the server a list-pieces command has been received.
+    //
     public void notifyCommandListPieces(final ClientThread client) {
         sendListPieces(client);
     }
 
+    // notifyCommandListGameProperties
+    // Notify the server a list-moves command has been received.
+    //
     public void notifyCommandListMoves(final ClientThread client,
                                        final int pieceID) {
         sendListMoves(client, pieceID);
     }
 
+    // notifyCommandListGameProperties
+    // Notify the server a move command has been received.
+    //
     public void notifyCommandMove(final ClientThread client, final int pieceID,
                                   final int x, final int y) {
         engineLock.lock();
         try {
-            final MoveResult result =
-                engine.move(pieceID, new Point(x, y));
+            final MoveResult result = engine.move(pieceID, new Point(x, y));
             if(result == null) {
                 sendMove(client, 0, 0, 0);
                 return;

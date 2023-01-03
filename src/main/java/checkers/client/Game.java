@@ -3,6 +3,7 @@ package checkers.client;
 import checkers.Piece;
 import checkers.utility.Dimensions2D;
 import checkers.utility.Point;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -26,11 +27,11 @@ public class Game {
     private final Group pieceGroup =
         new Group(); // JavaFX group that contains all pieces
 
+    private List<ClientPiece> pieces = new ArrayList<>();
     private Client client;
-    private List<ClientPiece> pieces;
 
-    public Game() {
-        client = new Client();
+    public Game(Client client) {
+        this.client = client;
     }
 
     /**
@@ -42,7 +43,9 @@ public class Game {
     private Parent initialiseContent() {
         Pane root = new Pane();
 
-        final Dimensions2D dimensions = client.getBoardSize();
+        // TODO: Move the below code into command handlers.
+
+        final Dimensions2D dimensions = null;
         root.setPrefSize(dimensions.width * tileSize,
                          dimensions.height * tileSize);
         root.getChildren().addAll(tileGroup, pieceGroup);
@@ -57,7 +60,7 @@ public class Game {
             }
         }
 
-        pieces = client.listPieces();
+        // pieces = client.listPieces();
         for(ClientPiece piece: pieces) {
             piece.initialise(tileSize);
             final Point position = piece.getPosition();
@@ -193,12 +196,6 @@ public class Game {
     // }
 
     public void run() {
-        final PlayerInformation player = client.connect();
-        if(player == null) {
-            // TODO: Handle error.
-            return;
-        }
-
         final Stage stage = new Stage();
         Parent parent = initialiseContent();
         Scene scene = new Scene(parent);
