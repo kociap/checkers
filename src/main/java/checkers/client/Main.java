@@ -7,6 +7,8 @@ public class Main {
         Platform.startup(() -> {
             Client client = new Client();
             client.run();
+            Game game = new Game(client);
+            game.run();
         });
     }
 }

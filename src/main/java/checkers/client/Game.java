@@ -1,6 +1,7 @@
 package checkers.client;
 
 import checkers.Piece;
+import checkers.server.ServerPiece;
 import checkers.utility.Dimensions2D;
 import checkers.utility.Point;
 import java.util.ArrayList;
@@ -45,18 +46,39 @@ public class Game {
 
         // TODO: Move the below code into command handlers.
 
-        final Dimensions2D dimensions = null;
+        final Dimensions2D dimensions = new Dimensions2D(8, 8);
         root.setPrefSize(dimensions.width * tileSize,
                          dimensions.height * tileSize);
         root.getChildren().addAll(tileGroup, pieceGroup);
 
         board = new Tile[dimensions.width][dimensions.height];
 
+        int ID = 0;
         for(int y = 0; y < dimensions.height; y++) {
             for(int x = 0; x < dimensions.width; x++) {
                 Tile tile = new Tile((x + y) % 2 == 0, x, y, tileSize);
                 board[x][y] = tile;
                 tileGroup.getChildren().add(tile);
+
+                ClientPiece clientPiece;
+                ServerPiece serverPiece;
+
+                if(y <= (dimensions.height / 2 - 2) && (x + y) % 2 != 0) {
+                    Point point = new Point(x, y);
+                    // TODO Have to find the way to put kings on the board
+                    serverPiece = new ServerPiece(ID, point, Piece.Color.black, Piece.Kind.pawn);
+                    clientPiece = makePiece(serverPiece);
+                    pieces.add(clientPiece);
+                    ID++;
+                }
+                if(y >= (dimensions.height / 2 + 1) && (x + y) % 2 != 0) {
+                    Point point = new Point(x, y);
+                    // TODO Have to find the way to put kings on the board
+                    serverPiece = new ServerPiece(ID, point, Piece.Color.white, Piece.Kind.pawn);
+                    clientPiece = makePiece(serverPiece);
+                    pieces.add(clientPiece);
+                    ID++;
+                }
             }
         }
 
@@ -79,30 +101,39 @@ public class Game {
      * Checks if made move is legal and if it is returns what type of move
      * was made.
      *
-     * @param piece a piece that player moved
+     * @param clientPiece a piece that player moved
      * @param newX vertical position of piece after move was made
      * @param newY horizontal position of piece after move was made
      * @return A tape of move that was made.
      */
-    private void tryMove(Piece piece, int newX, int newY) {
-        // if (board[newX][newY].hasPiece() || (newX + newY) % 2 == 0) {
-        //     return MoveResult.none;
-        // }
+    private String tryMove(ClientPiece clientPiece, int newX, int newY) {
+        int moveDir = 0;
 
-        // int x0 = toBoard(piece.getOldX());
-        // int y0 = toBoard(piece.getOldY());
+         if (board[newX][newY].hasPiece() || (newX + newY) % 2 == 0) {
+             return "none";
+         }
 
-        // // check what kind of move was made
-        // if (Math.abs(newX - x0) == 1 && newY - y0 == piece.getType().moveDir) {
-        //     return MoveResult.normal;
-        // } else if (Math.abs(newX - x0) == 2 && newY - y0 == piece.getType().moveDir * 2) {
-        //     int x1 = x0 + (newX - x0) / 2;
-        //     int y1 = y0 + (newY - y0) / 2;
+         int x0 = toBoard(clientPiece.getOldX());
+         int y0 = toBoard(clientPiece.getOldY());
+         if(clientPiece.getKind() == Piece.Kind.pawn && clientPiece.getColor() == Piece.Color.black) {
+             moveDir = 1;
+         }
+         if(clientPiece.getKind() == Piece.Kind.pawn && clientPiece.getColor() == Piece.Color.white) {
+             moveDir = -1;
+         }
 
-        //     if(board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-        //         return MoveResult.kill;
-        //     }
-        // }
+         // check what kind of move was made
+         if (Math.abs(newX - x0) == 1 && newY - y0 == moveDir) {
+             return "normal";
+         } else if (Math.abs(newX - x0) == 2 && newY - y0 == moveDir) {
+             int x1 = x0 + (newX - x0) / 2;
+             int y1 = y0 + (newY - y0) / 2;
+
+             if(board[x1][y1].hasPiece() && board[x1][y1].getPiece().getKind() != clientPiece.getKind()) {
+                return "beat";
+             }
+         }
+         return "none";
     }
 
     /**
@@ -113,87 +144,93 @@ public class Game {
      * @param newX vertical position of piece after move was made
      * @param newY horizontal position of piece after move was made
      */
-    public void setKing(Piece piece, int newX, int newY) {
-        // if(piece.getType() == checkers.server.Piece.Kind.WHITE && newY < 1) {
-        //     board[newX][newY].setPiece(null);
-        //     pieceGroup.getChildren().remove(piece);
+    public void setKing(ClientPiece piece, int newX, int newY) {
+         if(piece.getColor() == Piece.Color.white && newY < 1) {
+             board[newX][newY].setPiece(null);
+             pieceGroup.getChildren().remove(piece);
+             pieces.remove(piece);
 
-        //     Piece whiteKing = new Piece(checkers.server.Piece.Kind.WHITE_KING, newX, newY, tileSize);
-        //     board[newX][newY].setPiece(whiteKing);
-        //     pieceGroup.getChildren().add(whiteKing);
-        // } else if(piece.getType() == checkers.server.Piece.Kind.RED && newY > height - 2){
-        //     board[newX][newY].setPiece(null);
-        //     pieceGroup.getChildren().remove(piece);
+             Point point = new Point(newX, newY);
+             ClientPiece whiteKing = new ClientPiece(piece.getID(), Piece.Kind.king, Piece.Color.white, point);
+             board[newX][newY].setPiece(whiteKing);
+             pieceGroup.getChildren().add(whiteKing);
+             pieces.add(whiteKing);
+         } else if(piece.getColor() == Piece.Color.black && newY > 8 - 2){
+             board[newX][newY].setPiece(null);
+             pieceGroup.getChildren().remove(piece);
+             pieces.remove(piece);
 
-        //     Piece redKing = new Piece(checkers.server.Piece.Kind.RED_KING, newX, newY, tileSize);
-        //     board[newX][newY].setPiece(redKing);
-        //     pieceGroup.getChildren().add(redKing);
-        // }
+             Point point = new Point(newX, newY);
+             ClientPiece blackKing = new ClientPiece(piece.getID(), Piece.Kind.king, Piece.Color.black, point);
+             board[newX][newY].setPiece(blackKing);
+             pieceGroup.getChildren().add(blackKing);
+             pieces.add(blackKing);
+         }
     }
 
     /**
      * Makes pieces movable and changes the board after every legal move.
      *
-     * @param type type of piece player moved
-     * @param x vertical position of the piece
-     * @param y horizontal position of the piece
+     * @param serverPiece server interpretation of the piece on the board
      * @return a new piece that is effect of the done move.
      */
-    // private checkers.client.Piece makePiece(checkers.server.Piece serverPiece) {
-    //     checkers.client.Piece piece =
-    //         new checkers.client.Piece(serverPiece, tileSize);
+     private ClientPiece makePiece(ServerPiece serverPiece) {
+         ClientPiece clientPiece = new ClientPiece(serverPiece.getID(), serverPiece.getKind(), serverPiece.getColor(), serverPiece.getPosition());
+//
+////          Here I will try to provide a light up tiles of possible moves for single piece
+//            clientPiece.setOnMouseEntered(e -> {
+//                int x0 = toBoard(clientPiece.getLayoutX());
+//                int y0 = toBoard(clientPiece.getLayoutY());
+//
+//                board[x0 + 1][y0 + 1].setFill(Color.BLUE);
+//                board[x0 - 1][y0 + 1].setFill(Color.BLUE);
+//            });
+//
+//            clientPiece.setOnMouseExited(e -> {
+//                int x0 = toBoard(clientPiece.getLayoutX());
+//                int y0 = toBoard(clientPiece.getLayoutY());
+//
+//                board[x0 + 1][y0 + 1].setFill(Color.GREEN);
+//                board[x0 - 1][y0 + 1].setFill(Color.GREEN);
+//            });
 
-    //      Here I will try to provide a light up tiles of possible moves for single piece
-    //        piece.setOnMouseEntered(e -> {
-    //            int x0 = toBoard(piece.getLayoutX());
-    //            int y0 = toBoard(piece.getLayoutY());
-    //
-    //            board[x0 + 1][y0 + 1].setFill(Color.BLUE);
-    //            board[x0 - 1][y0 + 1].setFill(Color.BLUE);
-    //        });
-    //
-    //        piece.setOnMouseExited(e -> {
-    //            int x0 = toBoard(piece.getLayoutX());
-    //            int y0 = toBoard(piece.getLayoutY());
-    //
-    //            board[x0 + 1][y0 + 1].setFill(Color.GREEN);
-    //            board[x0 - 1][y0 + 1].setFill(Color.GREEN);
-    //        });
+     clientPiece.setOnMouseReleased(e -> {
+         int newX = toBoard(clientPiece.getLayoutX());
+         int newY = toBoard(clientPiece.getLayoutY());
 
-    // piece.setOnMouseReleased(e -> {
-    //     int newX = toBoard(piece.getLayoutX());
-    //     int newY = toBoard(piece.getLayoutY());
+         String result = tryMove(clientPiece, newX, newY);
+         setKing(clientPiece, newX, newY);
 
-    //     MoveResult result = tryMove(piece, newX, newY);
-    //     setKing(piece, newX, newY);
+         int x0 = toBoard(clientPiece.getOldX());
+         int y0 = toBoard(clientPiece.getOldY());
 
-    //     int x0 = toBoard(piece.getOldX());
-    //     int y0 = toBoard(piece.getOldY());
+         switch (result) {
+             case "none" -> clientPiece.abortMove();
+             case "normal" -> {
+                 Point point = new Point(newX, newY);
+                 clientPiece.move(point);
+                 board[x0][y0].setPiece(null);
+                 board[newX][newY].setPiece(clientPiece);
+             }
+             // TODO I don't know why it doesn't work :C
+             case "beat" -> {
+                 Point point = new Point(newX, newY);
+                 clientPiece.move(point);
+                 board[x0][y0].setPiece(null);
+                 board[newX][newY].setPiece(clientPiece);
 
-    //     switch (result) {
-    //         case none -> piece.abortMove();
-    //         case normal -> {
-    //             piece.move(newX, newY);
-    //             board[x0][y0].setPiece(null);
-    //             board[newX][newY].setPiece(piece);
-    //         }
-    //         // Beating is now possible
-    //         case kill -> {
-    //             piece.move(newX, newY);
-    //             board[x0][y0].setPiece(null);
-    //             board[newX][newY].setPiece(piece);
+                 int beatenX = (x0 - newX) / 2;
+                 int beatenY = (y0 - newY) / 2;
+                 ClientPiece beatenPiece = board[x0 - beatenX][y0 - beatenY].getPiece();
+                 board[x0 - beatenX][y0 - beatenY].setPiece(null);
+                 pieces.remove(beatenPiece);
+                 pieceGroup.getChildren().remove(beatenPiece);
+             }
+         }
+     });
 
-    //             int beatenX = (x0 - newX) / 2;
-    //             int beatenY = (y0 - newY) / 2;
-    //             Piece beatenPiece = board[x0 - beatenX][y0 - beatenY].getPiece();
-    //             board[x0 - beatenX][y0 - beatenY].setPiece(null);
-    //             pieceGroup.getChildren().remove(beatenPiece);
-    //         }
-    //     }
-    // });
-
-    //     return piece;
-    // }
+         return clientPiece;
+     }
 
     public void run() {
         final Stage stage = new Stage();

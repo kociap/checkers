@@ -4,9 +4,9 @@ import checkers.Piece;
 import checkers.utility.Point;
 
 public class ServerPiece implements Piece {
-    private int ID;
+    private final int ID;
     private Point position;
-    private Color color;
+    private final Color color;
     private Kind kind;
 
     public ServerPiece(int ID, Point position, Color color, Kind kind) {
