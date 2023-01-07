@@ -69,14 +69,15 @@ public class EnglishDraughts implements Engine {
     }
 
     @Override
-    public List<Point> listMoves(int pieceID) {
+    public List<Point> listMoves(final int pieceID) {
         final List<Point> moves = new ArrayList<>();
         final ServerPiece piece = findPieceByID(pieceID);
         if(piece == null) {
             return moves;
         }
+        final boolean mandatoryTakes = doesCurrentColorHaveTakes();
         final List<InternalMove> internalMoves =
-            internalListMoves(piece, false);
+            listPieceMoves(piece, mandatoryTakes);
         for(InternalMove im: internalMoves) {
             moves.add(im.position);
         }
@@ -91,7 +92,8 @@ public class EnglishDraughts implements Engine {
         }
 
         final MoveResult result = new MoveResult();
-        final List<InternalMove> moves = internalListMoves(piece, false);
+        final boolean mandatoryTakes = doesCurrentColorHaveTakes();
+        final List<InternalMove> moves = listPieceMoves(piece, mandatoryTakes);
         InternalMove validMove = null;
         for(final InternalMove im: moves) {
             if(im.position.equals(position)) {
@@ -121,9 +123,10 @@ public class EnglishDraughts implements Engine {
             piece.promote();
         }
 
-        // Check for take sequence.
-        final List<InternalMove> nextMoves = internalListMoves(piece, true);
-        if(nextMoves.size() > 0) {
+        // Check for a take sequence. The precondition is
+        // that we have moved in this turn.
+        final List<InternalMove> nextMoves = listPieceMoves(piece, true);
+        if(taken != null && nextMoves.size() > 0) {
             lastMovedPiece = piece;
         } else {
             // There are no more takes, hence we end the turn.
@@ -134,12 +137,23 @@ public class EnglishDraughts implements Engine {
         return result;
     }
 
-    private List<InternalMove> internalListMoves(final ServerPiece piece,
-                                                 final boolean forceTake) {
+    private boolean doesCurrentColorHaveTakes() {
+        for(final ServerPiece piece: pieces) {
+            final List<InternalMove> takes = listPieceMoves(piece, true);
+            if(takes.size() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<InternalMove> listPieceMoves(final ServerPiece piece,
+                                              final boolean forceTake) {
         final List<InternalMove> moves = new ArrayList<>();
         // If there are mandatory takes to be done, we must not list any moves
         // for pieces other than the last moved.
-        if(hasMandatoryTake() && lastMovedPiece.getID() != piece.getID()) {
+        if(hasMandatoryFollowupTake() &&
+           lastMovedPiece.getID() != piece.getID()) {
             return moves;
         }
 
@@ -147,16 +161,15 @@ public class EnglishDraughts implements Engine {
             return moves;
         }
 
-        final boolean mustBeTake = hasMandatoryTake() || forceTake;
+        final boolean mustBeTake = hasMandatoryFollowupTake() || forceTake;
         final int yDirection = (piece.getColor() == Piece.Color.white) ? 1 : -1;
-        final Point source = piece.getPosition();
 
-        final InternalMove m1 = checkMove(source, 1, yDirection, mustBeTake);
+        final InternalMove m1 = checkMove(piece, 1, yDirection, mustBeTake);
         if(m1 != null) {
             moves.add(m1);
         }
 
-        final InternalMove m2 = checkMove(source, -1, yDirection, mustBeTake);
+        final InternalMove m2 = checkMove(piece, -1, yDirection, mustBeTake);
         if(m2 != null) {
             moves.add(m2);
         }
@@ -164,13 +177,13 @@ public class EnglishDraughts implements Engine {
         if(piece.getKind() == Piece.Kind.king) {
             // Promoted pieces may also move backwards.
             final InternalMove m3 =
-                checkMove(source, 1, -yDirection, mustBeTake);
+                checkMove(piece, 1, -yDirection, mustBeTake);
             if(m3 != null) {
                 moves.add(m3);
             }
 
             final InternalMove m4 =
-                checkMove(source, -1, -yDirection, mustBeTake);
+                checkMove(piece, -1, -yDirection, mustBeTake);
             if(m4 != null) {
                 moves.add(m4);
             }
@@ -179,9 +192,10 @@ public class EnglishDraughts implements Engine {
         return moves;
     }
 
-    private InternalMove checkMove(final Point source, final int deltaX,
+    private InternalMove checkMove(final ServerPiece piece, final int deltaX,
                                    final int deltaY, final boolean mustBeTake) {
-        Point diagonal = new Point(source.x + deltaX, source.y + deltaY);
+        Point diagonal = new Point(piece.getPosition().x + deltaX,
+                                   piece.getPosition().y + deltaY);
         if(!checkInBounds(diagonal)) {
             return null;
         }
@@ -194,6 +208,11 @@ public class EnglishDraughts implements Engine {
             } else {
                 return null;
             }
+        }
+
+        // We may not take our own piece.
+        if(piece.getColor() == p1.getColor()) {
+            return null;
         }
 
         diagonal.x += deltaX;
@@ -242,7 +261,7 @@ public class EnglishDraughts implements Engine {
         return null;
     }
 
-    private boolean hasMandatoryTake() {
+    private boolean hasMandatoryFollowupTake() {
         return lastMovedPiece != null;
     }
 
