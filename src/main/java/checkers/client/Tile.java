@@ -5,16 +5,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Tile extends Rectangle {
-    private ClientPiece piece = null;
-
-    public ClientPiece getPiece() {
-        return piece;
-    }
-
-    public void setPiece(ClientPiece piece) {
-        this.piece = piece;
-    }
-
     public Tile(int x, int y, int tileSize) {
         setWidth(tileSize);
         setHeight(tileSize);
