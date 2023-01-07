@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Server implements CommandReceiver {
     private final static int port = 8080;
     private final static int socketIDWhite = 0;
-    private final static int socketIDBlack = 0;
+    private final static int socketIDBlack = 1;
 
     private ServerSocket socket;
     private UI ui = new UI(this);
