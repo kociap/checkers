@@ -15,6 +15,7 @@ public class ClientPiece extends StackPane implements Piece {
 
     private Ellipse foreground;
     private Ellipse background;
+    private Ellipse delimiter;
     private Ellipse foreground2ndLayer;
     private Ellipse background2ndLayer;
 
@@ -70,22 +71,28 @@ public class ClientPiece extends StackPane implements Piece {
         final double verticalShift = size * 0.05;
 
         foreground = new Ellipse(width, height);
-        foreground.setStrokeType(StrokeType.INSIDE);
+        foreground.setStrokeType(StrokeType.CENTERED);
         foreground.setStrokeWidth(outline);
 
         background = new Ellipse(width, height);
-        background.setStrokeType(StrokeType.INSIDE);
+        background.setStrokeType(StrokeType.CENTERED);
         background.setStrokeWidth(outline);
         background.setTranslateY(2 * verticalShift);
 
+        delimiter = new Ellipse(width, height);
+        delimiter.setStrokeType(StrokeType.CENTERED);
+        delimiter.setStrokeWidth(outline);
+        delimiter.setTranslateY(-0.5 * outline);
+
         foreground2ndLayer = new Ellipse(width, height);
-        foreground2ndLayer.setStrokeType(StrokeType.INSIDE);
+        foreground2ndLayer.setStrokeType(StrokeType.CENTERED);
         foreground2ndLayer.setStrokeWidth(outline);
-        foreground2ndLayer.setTranslateY(2 * -verticalShift);
+        foreground2ndLayer.setTranslateY(-outline + -2 * verticalShift);
 
         background2ndLayer = new Ellipse(width, height);
         background2ndLayer.setStrokeType(StrokeType.INSIDE);
         background2ndLayer.setStrokeWidth(outline);
+        background2ndLayer.setTranslateY(-outline);
 
         final javafx.scene.paint.Color colorFg =
             (color == Piece.Color.black ? ColorPalette.pieceBlackFg
@@ -98,10 +105,12 @@ public class ClientPiece extends StackPane implements Piece {
         foreground.setStroke(colorBg);
         background.setFill(colorBg);
         background.setStroke(colorBg);
+        delimiter.setFill(colorFg);
+        delimiter.setStroke(colorFg);
         foreground2ndLayer.setFill(colorFg);
         foreground2ndLayer.setStroke(colorBg);
         background2ndLayer.setFill(colorBg);
-        background2ndLayer.setStroke(colorFg);
+        background2ndLayer.setStroke(colorBg);
 
         readdChildren();
     }
@@ -111,7 +120,7 @@ public class ClientPiece extends StackPane implements Piece {
         if(kind == Piece.Kind.pawn) {
             getChildren().addAll(background, foreground);
         } else {
-            getChildren().addAll(background, foreground, background2ndLayer,
+            getChildren().addAll(background, foreground, delimiter, background2ndLayer,
                                  foreground2ndLayer);
         }
     }
