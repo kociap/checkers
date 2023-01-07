@@ -2,10 +2,6 @@ package checkers.server;
 
 import checkers.*;
 import java.net.ServerSocket;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 // Server
 // Listens on localhost port 8080.

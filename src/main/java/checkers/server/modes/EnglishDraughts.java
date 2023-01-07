@@ -1,10 +1,6 @@
 package checkers.server.modes;
 
-import checkers.Dimensions2D;
-import checkers.Piece;
-import checkers.PieceIterable;
-import checkers.PieceIterator;
-import checkers.Point;
+import checkers.*;
 import checkers.server.Engine;
 import checkers.server.MoveResult;
 import checkers.server.ServerPiece;

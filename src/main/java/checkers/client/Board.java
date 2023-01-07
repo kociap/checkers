@@ -1,17 +1,11 @@
 package checkers.client;
 
 import checkers.Dimensions2D;
-import checkers.Piece;
 import checkers.Point;
-import checkers.server.ServerPiece;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.Event;
 import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 
 public class Board extends Pane {
     private final Group tileGroup = new Group();

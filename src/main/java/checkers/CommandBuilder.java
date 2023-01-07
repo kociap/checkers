@@ -1,7 +1,5 @@
 package checkers;
 
-import checkers.Piece;
-
 public class CommandBuilder {
     private StringBuilder builder = new StringBuilder();
     private boolean startedParameters = false;

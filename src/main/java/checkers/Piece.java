@@ -1,7 +1,5 @@
 package checkers;
 
-import checkers.Point;
-
 // Piece
 // Piece IDs start at 1.
 //

@@ -120,8 +120,8 @@ public class ClientPiece extends StackPane implements Piece {
         if(kind == Piece.Kind.pawn) {
             getChildren().addAll(background, foreground);
         } else {
-            getChildren().addAll(background, foreground, delimiter, background2ndLayer,
-                                 foreground2ndLayer);
+            getChildren().addAll(background, foreground, delimiter,
+                                 background2ndLayer, foreground2ndLayer);
         }
     }
 }

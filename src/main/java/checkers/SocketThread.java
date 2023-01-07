@@ -1,7 +1,5 @@
 package checkers;
 
-import checkers.SocketWrapper;
-
 public class SocketThread extends Thread {
     private SocketWrapper socket;
     private CommandQueue queue;

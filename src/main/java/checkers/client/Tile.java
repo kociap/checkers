@@ -1,6 +1,5 @@
 package checkers.client;
 
-import checkers.Piece;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 

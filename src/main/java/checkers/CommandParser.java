@@ -1,7 +1,5 @@
 package checkers;
 
-import checkers.Piece;
-
 public class CommandParser {
     private String buffer;
     private int i = 0;

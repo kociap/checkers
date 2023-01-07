@@ -1,7 +1,5 @@
 package checkers;
 
-import checkers.Piece;
-import java.lang.Iterable;
 import java.util.Iterator;
 
 public class PieceIterable implements Iterable<Piece> {
