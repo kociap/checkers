@@ -15,17 +15,98 @@ public class Server implements CommandReceiver {
     private final static int socketIDWhite = 0;
     private final static int socketIDBlack = 1;
 
-    private ServerSocket socket;
+    private class ClientSocketThread extends SocketThread {
+        private Piece.Color color;
+
+        public ClientSocketThread(Piece.Color color, SocketWrapper socket,
+                                  CommandQueue queue) {
+            super(socket, queue);
+            this.color = color;
+        }
+
+        public Piece.Color getClientColor() {
+            return color;
+        }
+    }
+
+    private class ClientConnectionThread extends Thread {
+        private CommandQueue queue;
+        private ClientSocketThread clientWhite = null;
+        private ClientSocketThread clientBlack = null;
+
+        public ClientConnectionThread(CommandQueue queue) {
+            this.queue = queue;
+        }
+
+        public ClientSocketThread getClientWhite() {
+            return clientWhite;
+        }
+
+        public ClientSocketThread getClientBlack() {
+            return clientBlack;
+        }
+
+        @Override
+        public void run() {
+            try {
+                clientWhite = new ClientSocketThread(
+                    Piece.Color.white, new SocketWrapper(socket.accept()),
+                    queueWhite);
+                clientWhite.start();
+                sendConnectWhite();
+                clientBlack = new ClientSocketThread(
+                    Piece.Color.black, new SocketWrapper(socket.accept()),
+                    queueBlack);
+                clientBlack.start();
+                sendConnectBlack();
+                sendConnectComplete();
+            } catch(Exception e) {
+                sendConnectFailure();
+            }
+        }
+
+        private void sendConnectFailure() {
+            final CommandBuilder builder = new CommandBuilder();
+            builder.command("connect-failure");
+            queue.push(builder.finalise());
+        }
+
+        private void sendConnectWhite() {
+            final CommandBuilder builder = new CommandBuilder();
+            builder.command("connect-white");
+            queue.push(builder.finalise());
+        }
+
+        private void sendConnectBlack() {
+            final CommandBuilder builder = new CommandBuilder();
+            builder.command("connect-black");
+            queue.push(builder.finalise());
+        }
+
+        private void sendConnectComplete() {
+            final CommandBuilder builder = new CommandBuilder();
+            builder.command("connect-complete");
+            queue.push(builder.finalise());
+        }
+    }
+
+    private ServerSocket socket = null;
     private UI ui = new UI(this);
 
-    private ClientSocketThread clientWhite;
     private CommandQueue queueWhite = new CommandQueue();
     private BgQueuePoller pollerWhite =
         new BgQueuePoller(socketIDWhite, this, queueWhite);
-    private ClientSocketThread clientBlack;
     private CommandQueue queueBlack = new CommandQueue();
     private BgQueuePoller pollerBlack =
         new BgQueuePoller(socketIDBlack, this, queueBlack);
+    private CommandQueue queueConnection = new CommandQueue();
+    private BgQueuePoller pollerConnection =
+        new BgQueuePoller(-1, this, queueConnection);
+
+    private ClientSocketThread clientWhite = null;
+    private ClientSocketThread clientBlack = null;
+    private final ClientConnectionThread threadConnection =
+        new ClientConnectionThread(queueConnection);
 
     private Engine engine = null;
 
@@ -38,6 +119,7 @@ public class Server implements CommandReceiver {
 
         pollerWhite.start();
         pollerBlack.start();
+        pollerConnection.start();
 
         ui.show();
 
@@ -46,28 +128,52 @@ public class Server implements CommandReceiver {
 
     public void notifyEngineSelected(Engine engine) {
         this.engine = engine;
-        try {
-            // TODO: Move to thread;
-            clientWhite = new ClientSocketThread(
-                Piece.Color.white, new SocketWrapper(socket.accept()),
-                queueWhite);
-            clientWhite.start();
-            sendHello(clientWhite, Piece.Color.white);
-            ui.notifyClientConnected();
-            clientBlack = new ClientSocketThread(
-                Piece.Color.black, new SocketWrapper(socket.accept()),
-                queueBlack);
-            clientBlack.start();
-            sendHello(clientBlack, Piece.Color.black);
-            ui.notifyClientConnected();
-            // TODO: Send begin turn
-        } catch(Exception e) {
-            return;
-        }
+        threadConnection.start();
     }
 
     @Override
     public void receiveCommand(final int socketID, final String command) {
+        if(socketID < 0) {
+            receiveConnectionCommand(command);
+        } else {
+            receiveClientCommand(socketID, command);
+        }
+    }
+
+    private void receiveConnectionCommand(final String command) {
+        final CommandParser parser = new CommandParser(command);
+        if(parser.match("connect-white")) {
+            clientWhite = threadConnection.getClientWhite();
+            sendHello(clientWhite, Piece.Color.white);
+            ui.notifyClientWhiteConnected();
+            return;
+        }
+
+        if(parser.match("connect-black")) {
+            clientBlack = threadConnection.getClientBlack();
+            sendHello(clientBlack, Piece.Color.black);
+            ui.notifyClientBlackConnected();
+            return;
+        }
+
+        if(parser.match("connect-complete")) {
+            sendBeginTurn(clientWhite);
+            sendEndTurn(clientBlack);
+            ui.notifyClientConnectComplete();
+            return;
+        }
+
+        if(parser.match("connect-failure")) {
+            // TODO: Terminate application.
+            System.out.println("server received connect-failure");
+            return;
+        }
+
+        System.out.println("unknown command \"" + command + "\"");
+    }
+
+    private void receiveClientCommand(final int socketID,
+                                      final String command) {
         final ClientSocketThread client =
             (socketID == socketIDWhite ? clientWhite : clientBlack);
         final CommandParser parser = new CommandParser(command);

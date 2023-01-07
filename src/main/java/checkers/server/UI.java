@@ -52,18 +52,26 @@ public class UI {
         window.show();
     }
 
-    public void notifyClientConnected() {
-        // TODO: Implement.
-        //       Change state of the user interface to let the user of
-        //       the server know a player has connected.
+    public void notifyClientWhiteConnected() {}
+
+    public void notifyClientBlackConnected() {}
+
+    public void notifyClientConnectComplete() {
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        Text text = new Text("Game in progress.");
+        vbox.getChildren().addAll(text);
+        Scene scene = new Scene(vbox);
+        window.setScene(scene);
     }
 
     private void setViewWaitingForClientsToConnect() {
         // TODO: Prevent window from resizing, center and enlarge text.
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
-        Text text = new Text("Waiting for players to connect");
-        vbox.getChildren().addAll(text);
+        Text text1 = new Text("Waiting for white to connect.");
+        Text text2 = new Text("Waiting for black to connect.");
+        vbox.getChildren().addAll(text1, text2);
         Scene scene = new Scene(vbox);
         window.setScene(scene);
     }
