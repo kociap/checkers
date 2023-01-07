@@ -54,9 +54,12 @@ public class Server implements CommandReceiver {
             clientWhite.start();
             sendHello(clientWhite, Piece.Color.white);
             ui.notifyClientConnected();
-            // clientWhite = new SocketWrapper(socket.accept());
-            // sendHello(clientWhite, Piece.Color.white);
-            // ui.notifyClientConnected();
+            clientBlack = new ClientSocketThread(
+                Piece.Color.black, new SocketWrapper(socket.accept()),
+                queueBlack);
+            clientBlack.start();
+            sendHello(clientBlack, Piece.Color.black);
+            ui.notifyClientConnected();
             // TODO: Send begin turn
         } catch(Exception e) {
             return;
@@ -125,25 +128,25 @@ public class Server implements CommandReceiver {
         }
 
         sendMove(clientWhite, pieceID, result.position.x, result.position.y);
-        // sendMove(clientBlack, pieceID, result.position.x, result.position.y);
+        sendMove(clientBlack, pieceID, result.position.x, result.position.y);
         if(result.takenID != Piece.noneID) {
-            sendTake(clientWhite, pieceID);
-            // sendTake(clientBlack, pieceID);
+            sendTake(clientWhite, result.takenID);
+            sendTake(clientBlack, result.takenID);
         }
 
         if(result.promoted) {
             sendPromote(clientWhite, pieceID);
-            // sendPromote(clientBlack, pieceID);
+            sendPromote(clientBlack, pieceID);
         }
 
         if(result.endTurn) {
             final Piece.Color color = engine.getCurrentColor();
             if(color == Piece.Color.white) {
-                // sendEndTurn(clientBlack);
+                sendEndTurn(clientBlack);
                 sendBeginTurn(clientWhite);
             } else {
                 sendEndTurn(clientWhite);
-                // sendBeginTurn(clientBlack);
+                sendBeginTurn(clientBlack);
             }
         }
     }
