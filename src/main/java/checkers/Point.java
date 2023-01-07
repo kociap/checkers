@@ -1,4 +1,4 @@
-package checkers.utility;
+package checkers;
 
 public class Point {
     public int x;

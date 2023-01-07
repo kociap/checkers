@@ -1,13 +1,14 @@
 package checkers.server;
 
+import checkers.Dimensions2D;
 import checkers.Piece;
-import checkers.utility.Dimensions2D;
-import checkers.utility.Point;
+import checkers.Point;
 import java.util.List;
 
 // Engine
-// White pieces are located towards y = 0.
-// Red pieces are located towards y = height - 1.
+// The coordinates start at (1,1) and end at (width,height).
+// White pieces are located towards y = 1.
+// Red pieces are located towards y = height.
 //
 public interface Engine {
     Dimensions2D getBoardSize();

@@ -1,13 +1,13 @@
 package checkers.server.modes;
 
+import checkers.Dimensions2D;
 import checkers.Piece;
+import checkers.PieceIterable;
+import checkers.PieceIterator;
+import checkers.Point;
 import checkers.server.Engine;
 import checkers.server.MoveResult;
 import checkers.server.ServerPiece;
-import checkers.utility.Dimensions2D;
-import checkers.utility.PieceIterable;
-import checkers.utility.PieceIterator;
-import checkers.utility.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +76,7 @@ public class EnglishDraughts implements Engine {
             return moves;
         }
         final List<InternalMove> internalMoves =
-            internalListMoves(piece, hasMandatoryTake());
+            internalListMoves(piece, false);
         for(InternalMove im: internalMoves) {
             moves.add(im.position);
         }
@@ -90,17 +90,8 @@ public class EnglishDraughts implements Engine {
             return null;
         }
 
-        if(piece.getColor() != currentColor) {
-            return null;
-        }
-
-        if(hasMandatoryTake() && piece.getID() != lastMovedPiece.getID()) {
-            return null;
-        }
-
         final MoveResult result = new MoveResult();
-        final List<InternalMove> moves =
-            internalListMoves(piece, hasMandatoryTake());
+        final List<InternalMove> moves = internalListMoves(piece, false);
         InternalMove validMove = null;
         for(final InternalMove im: moves) {
             if(im.position.equals(position)) {
@@ -144,11 +135,11 @@ public class EnglishDraughts implements Engine {
     }
 
     private List<InternalMove> internalListMoves(final ServerPiece piece,
-                                                 final boolean mustBeTake) {
+                                                 final boolean forceTake) {
         final List<InternalMove> moves = new ArrayList<>();
         // If there are mandatory takes to be done, we must not list any moves
         // for pieces other than the last moved.
-        if(mustBeTake && lastMovedPiece.getID() != piece.getID()) {
+        if(hasMandatoryTake() && lastMovedPiece.getID() != piece.getID()) {
             return moves;
         }
 
@@ -156,6 +147,7 @@ public class EnglishDraughts implements Engine {
             return moves;
         }
 
+        final boolean mustBeTake = hasMandatoryTake() || forceTake;
         final int yDirection = (piece.getColor() == Piece.Color.white) ? 1 : -1;
         final Point source = piece.getPosition();
 
@@ -259,6 +251,7 @@ public class EnglishDraughts implements Engine {
     }
 
     private void endTurn() {
+        lastMovedPiece = null;
         if(currentColor == Piece.Color.white) {
             currentColor = Piece.Color.black;
         } else {

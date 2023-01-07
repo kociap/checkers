@@ -1,12 +1,12 @@
-package checkers.client;
+package checkers;
 
-import checkers.utility.SocketWrapper;
+import checkers.SocketWrapper;
 
-public class ServerThread extends Thread {
+public class SocketThread extends Thread {
     private SocketWrapper socket;
     private CommandQueue queue;
 
-    public ServerThread(SocketWrapper socket, CommandQueue queue) {
+    public SocketThread(SocketWrapper socket, CommandQueue queue) {
         this.socket = socket;
         this.queue = queue;
     }

@@ -1,4 +1,4 @@
-package checkers.client;
+package checkers;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

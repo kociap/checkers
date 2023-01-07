@@ -1,4 +1,4 @@
-package checkers.utility;
+package checkers;
 
 import checkers.Piece;
 
@@ -30,7 +30,8 @@ public class CommandParser {
     public int matchInteger() {
         skipWhitespace();
         int end = i;
-        while(Character.isDigit(buffer.charAt(end))) {
+        while(Character.isDigit(buffer.charAt(end)) ||
+              buffer.charAt(end) == '-') {
             end += 1;
         }
         final String substring = buffer.substring(i, end);

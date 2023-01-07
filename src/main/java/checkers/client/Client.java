@@ -1,38 +1,14 @@
 package checkers.client;
 
-import checkers.Piece;
-import checkers.utility.CommandBuilder;
-import checkers.utility.CommandParser;
-import checkers.utility.Dimensions2D;
-import checkers.utility.Point;
-import checkers.utility.SocketWrapper;
+import checkers.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.animation.AnimationTimer;
 
-public class Client {
-    private class BgQueuePoll extends AnimationTimer {
-        private Client client;
-        private CommandQueue queue;
-
-        public BgQueuePoll(Client client, CommandQueue queue) {
-            this.client = client;
-            this.queue = queue;
-        }
-
-        @Override
-        public void handle(long now) {
-            if(queue.poll()) {
-                final String command = queue.pop();
-                client.receiveCommand(command);
-            }
-        }
-    }
-
-    private ServerThread server;
+public class Client implements RequestService, CommandReceiver {
+    private SocketThread server;
     private CommandQueue queue = new CommandQueue();
-    private BgQueuePoll poller = new BgQueuePoll(this, this.queue);
+    private BgQueuePoller poller = new BgQueuePoller(0, this, this.queue);
     private Game game = new Game(this);
 
     public boolean run() {
@@ -71,24 +47,25 @@ public class Client {
         final Piece.Color color = parser.matchPieceColor();
         final PlayerInformation player = new PlayerInformation(color);
 
-        server = new ServerThread(socket, queue);
+        server = new SocketThread(socket, queue);
         server.start();
 
         return player;
     }
 
-    private void receiveCommand(final String command) {
+    @Override
+    public void receiveCommand(final int socketID, final String command) {
         // TODO: Add missing server-issued commands.
         final CommandParser parser = new CommandParser(command);
-        if(parser.match("list-pieces")) {
-            final List<ClientPiece> pieces = parseListPieces(parser);
-            // game.
+        if(parser.match("list-game-properties")) {
+            final Dimensions2D size = parseListGameProperties(parser);
+            game.handleRequestSize(size);
             return;
         }
 
-        if(parser.match("list-game-properties")) {
-            final Dimensions2D size = parseListGameProperties(parser);
-            // game.
+        if(parser.match("list-pieces")) {
+            final List<ClientPiece> pieces = parseListPieces(parser);
+            game.handleRequestListPieces(pieces);
             return;
         }
 
@@ -98,11 +75,24 @@ public class Client {
             final int x = parser.matchInteger();
             parser.match(",");
             final int y = parser.matchInteger();
-            // game.
+            game.handleRequestMove(pieceID, new Point(x, y));
             return;
         }
 
         System.out.println("unknown command \"" + command + "\"");
+    }
+
+    public void requestSize() {
+        final CommandBuilder builder = new CommandBuilder();
+        builder.command("list-game-properties");
+        server.sendCommand(builder.finalise());
+    }
+
+    private Dimensions2D parseListGameProperties(final CommandParser parser) {
+        final int width = parser.matchInteger();
+        parser.match(",");
+        final int height = parser.matchInteger();
+        return new Dimensions2D(width, height);
     }
 
     public void requestListPieces() {
@@ -144,16 +134,12 @@ public class Client {
         return pieces;
     }
 
-    public void requestSize() {
+    public void requestMove(final int pieceID, final Point position) {
         final CommandBuilder builder = new CommandBuilder();
-        builder.command("list-game-properties");
+        builder.command("move")
+            .parameter(pieceID)
+            .parameter(position.x)
+            .parameter(position.y);
         server.sendCommand(builder.finalise());
-    }
-
-    private Dimensions2D parseListGameProperties(final CommandParser parser) {
-        final int width = parser.matchInteger();
-        parser.match(",");
-        final int height = parser.matchInteger();
-        return new Dimensions2D(width, height);
     }
 }

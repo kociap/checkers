@@ -1,7 +1,6 @@
-package checkers.utility;
+package checkers;
 
 import checkers.Piece;
-// import
 
 public class CommandBuilder {
     private StringBuilder builder = new StringBuilder();

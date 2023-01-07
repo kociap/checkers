@@ -5,11 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Tile extends Rectangle {
-    private ClientPiece piece;
-
-    public boolean hasPiece() {
-        return piece != null;
-    }
+    private ClientPiece piece = null;
 
     public ClientPiece getPiece() {
         return piece;
@@ -19,13 +15,11 @@ public class Tile extends Rectangle {
         this.piece = piece;
     }
 
-    public Tile(boolean light, int x, int y, int tileSize) {
+    public Tile(int x, int y, int tileSize) {
         setWidth(tileSize);
         setHeight(tileSize);
 
         relocate(x * tileSize, y * tileSize);
-
-        setFill(light ? Color.GREENYELLOW : Color.GREEN);
     }
 
     void setColor(Color color) {

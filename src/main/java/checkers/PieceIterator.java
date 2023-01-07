@@ -1,4 +1,4 @@
-package checkers.utility;
+package checkers;
 
 import checkers.Piece;
 import java.util.Iterator;

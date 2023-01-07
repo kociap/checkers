@@ -1,7 +1,7 @@
 package checkers.server;
 
+import checkers.Dimensions2D;
 import checkers.server.modes.EnglishDraughts;
-import checkers.utility.Dimensions2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

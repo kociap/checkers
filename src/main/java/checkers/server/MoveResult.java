@@ -1,7 +1,7 @@
 package checkers.server;
 
 import checkers.Piece;
-import checkers.utility.Point;
+import checkers.Point;
 
 public class MoveResult {
     public Point position = new Point(0, 0);

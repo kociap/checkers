@@ -28,8 +28,8 @@ list-pieces piece[,piece]...;
 list-moves move[,move]...;
 # move
 # Response to the client move command or as an update when the other player
-# performs a valid move. When responding to a client, the command will contain
-# 0 as the piece-id if the requested move was invalid.
+# performs a valid move. When responding to a client, the x and y will be -1 if
+# the requested move was invalid.
 move piece-id,x,y;
 # take
 # After a move if a piece has been taken.
