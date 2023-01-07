@@ -67,8 +67,6 @@ public class Board extends Pane {
         piece.setOnMouseReleased(e -> {
             final Point targetPosition =
                 getCoordinatesUnderCursor(e.getSceneX(), e.getSceneY());
-            System.out.println("target " + targetPosition.x + " " +
-                               targetPosition.y);
             requester.requestMove(piece.getID(), targetPosition);
         });
     }
