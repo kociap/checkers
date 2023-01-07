@@ -9,11 +9,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SocketWrapper {
-    private Socket socket;
-    private BufferedReader reader;
-    private BufferedWriter writer;
-    private Lock readerLock = new ReentrantLock();
-    private Lock writerLock = new ReentrantLock();
+    private final Socket socket;
+    private final BufferedReader reader;
+    private final BufferedWriter writer;
+    private final Lock readerLock = new ReentrantLock();
+    private final Lock writerLock = new ReentrantLock();
 
     public SocketWrapper(Socket socket) throws Exception {
         this.socket = socket;
@@ -39,10 +39,10 @@ public class SocketWrapper {
         try {
             writer.write(string);
             writer.flush();
-        } catch(Exception e) {
-            return;
         } finally {
             writerLock.unlock();
+            // Suppress exceptions.
+            return;
         }
     }
 }

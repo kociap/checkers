@@ -3,9 +3,9 @@ package checkers;
 import javafx.animation.AnimationTimer;
 
 public class BgQueuePoller extends AnimationTimer {
-    private CommandReceiver receiver;
-    private CommandQueue queue;
-    private int socketID;
+    private final CommandReceiver receiver;
+    private final CommandQueue queue;
+    private final int socketID;
 
     public BgQueuePoller(int socketID, CommandReceiver receiver,
                          CommandQueue queue) {

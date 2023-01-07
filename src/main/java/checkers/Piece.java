@@ -4,17 +4,17 @@ package checkers;
 // Piece IDs start at 1.
 //
 public interface Piece {
-    public enum Kind {
+    enum Kind {
         pawn,
         king,
     }
 
-    public enum Color {
+    enum Color {
         white,
         black,
     }
 
-    public static int noneID = 0;
+    int noneID = 0;
 
     int getID();
     Kind getKind();

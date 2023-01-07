@@ -7,22 +7,20 @@ import java.util.List;
 
 public class Client implements RequestService, CommandReceiver {
     private SocketThread server;
-    private CommandQueue queue = new CommandQueue();
-    private BgQueuePoller poller = new BgQueuePoller(0, this, this.queue);
-    private Game game = new Game(this);
+    private final CommandQueue queue = new CommandQueue();
+    private final BgQueuePoller poller = new BgQueuePoller(0, this, this.queue);
+    private final Game game = new Game(this);
 
-    public boolean run() {
+    public void run() {
         final PlayerInformation player = connect();
         if(player == null) {
-            return false;
+            return;
         }
 
         poller.start();
 
         // TODO: Pass PlayerInformation to game.
         game.run();
-
-        return true;
     }
 
     private PlayerInformation connect() {

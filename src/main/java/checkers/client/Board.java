@@ -10,9 +10,9 @@ import javafx.scene.layout.Pane;
 public class Board extends Pane {
     private final Group tileGroup = new Group();
     private final Group pieceGroup = new Group();
-    private List<ClientPiece> pieces = new ArrayList<>();
+    private final List<ClientPiece> pieces = new ArrayList<>();
     private int size = 0;
-    private RequestService requester;
+    private final RequestService requester;
     private Dimensions2D dimensions = null;
 
     public Board(RequestService requester) {

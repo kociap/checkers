@@ -12,7 +12,7 @@ public class Server implements CommandReceiver {
     private final static int socketIDBlack = 1;
 
     private class ClientSocketThread extends SocketThread {
-        private Piece.Color color;
+        private final Piece.Color color;
 
         public ClientSocketThread(Piece.Color color, SocketWrapper socket,
                                   CommandQueue queue) {
@@ -26,7 +26,7 @@ public class Server implements CommandReceiver {
     }
 
     private class ClientConnectionThread extends Thread {
-        private CommandQueue queue;
+        private final CommandQueue queue;
         private ClientSocketThread clientWhite = null;
         private ClientSocketThread clientBlack = null;
 
@@ -87,16 +87,16 @@ public class Server implements CommandReceiver {
     }
 
     private ServerSocket socket = null;
-    private UI ui = new UI(this);
+    private final UI ui = new UI(this);
 
-    private CommandQueue queueWhite = new CommandQueue();
-    private BgQueuePoller pollerWhite =
+    private final CommandQueue queueWhite = new CommandQueue();
+    private final BgQueuePoller pollerWhite =
         new BgQueuePoller(socketIDWhite, this, queueWhite);
-    private CommandQueue queueBlack = new CommandQueue();
-    private BgQueuePoller pollerBlack =
+    private final CommandQueue queueBlack = new CommandQueue();
+    private final BgQueuePoller pollerBlack =
         new BgQueuePoller(socketIDBlack, this, queueBlack);
-    private CommandQueue queueConnection = new CommandQueue();
-    private BgQueuePoller pollerConnection =
+    private final CommandQueue queueConnection = new CommandQueue();
+    private final BgQueuePoller pollerConnection =
         new BgQueuePoller(-1, this, queueConnection);
 
     private ClientSocketThread clientWhite = null;
@@ -106,11 +106,12 @@ public class Server implements CommandReceiver {
 
     private Engine engine = null;
 
-    public boolean run() {
+    public void run() {
         try {
             socket = new ServerSocket(port);
         } catch(Exception e) {
-            return false;
+            System.out.println("error: failed to start the server");
+            return;
         }
 
         pollerWhite.start();
@@ -118,8 +119,6 @@ public class Server implements CommandReceiver {
         pollerConnection.start();
 
         ui.show();
-
-        return true;
     }
 
     public void notifyEngineSelected(Engine engine) {

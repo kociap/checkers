@@ -7,9 +7,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CommandQueue {
-    private Queue<String> queue = new ArrayDeque<>();
-    private Lock lock = new ReentrantLock();
-    private Condition condition = this.lock.newCondition();
+    private final Queue<String> queue = new ArrayDeque<>();
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = this.lock.newCondition();
 
     public void push(final String command) {
         lock.lock();

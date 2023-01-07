@@ -1,7 +1,7 @@
 package checkers;
 
 public class CommandBuilder {
-    private StringBuilder builder = new StringBuilder();
+    private final StringBuilder builder = new StringBuilder();
     private boolean startedParameters = false;
 
     public CommandBuilder command(String command) {

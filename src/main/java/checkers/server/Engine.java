@@ -6,7 +6,7 @@ import checkers.Point;
 import java.util.List;
 
 // Engine
-// The coordinates start at (1,1) and end at (width,height).
+// The coordinates start at (0, 0) and end at (width - 1, height - 1).
 // White pieces are located towards y = 1.
 // Red pieces are located towards y = height.
 //

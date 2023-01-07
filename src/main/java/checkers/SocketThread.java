@@ -1,8 +1,8 @@
 package checkers;
 
 public class SocketThread extends Thread {
-    private SocketWrapper socket;
-    private CommandQueue queue;
+    private final SocketWrapper socket;
+    private final CommandQueue queue;
 
     public SocketThread(SocketWrapper socket, CommandQueue queue) {
         this.socket = socket;

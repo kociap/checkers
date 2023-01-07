@@ -18,8 +18,8 @@ public class EnglishDraughts implements Engine {
         }
     }
 
-    private List<ServerPiece> pieces = new ArrayList<>();
-    private Dimensions2D size;
+    private final List<ServerPiece> pieces = new ArrayList<>();
+    private final Dimensions2D size;
     private Piece.Color currentColor = Piece.Color.white;
     private ServerPiece lastMovedPiece = null;
 

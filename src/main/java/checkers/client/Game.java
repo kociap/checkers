@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class Game {
     private static final int defaultTileSize = 50; // Size of a single tile
 
-    private RequestService requester;
+    private final RequestService requester;
     private final Board board;
     private final Stage stage = new Stage();
 

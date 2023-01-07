@@ -8,9 +8,9 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.StrokeType;
 
 public class ClientPiece extends StackPane implements Piece {
-    private int ID;
+    private final int ID;
     private Piece.Kind kind;
-    private Piece.Color color;
+    private final Piece.Color color;
     private Point position = new Point(0, 0);
 
     private Ellipse foreground;

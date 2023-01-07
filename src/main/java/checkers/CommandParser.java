@@ -1,7 +1,7 @@
 package checkers;
 
 public class CommandParser {
-    private String buffer;
+    private final String buffer;
     private int i = 0;
 
     public CommandParser(String buffer) {
