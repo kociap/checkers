@@ -2,14 +2,21 @@ package checkers.client;
 
 import checkers.Piece;
 import checkers.Point;
+import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.StrokeType;
 
 public class ClientPiece extends StackPane implements Piece {
     private int ID;
     private Piece.Kind kind;
     private Piece.Color color;
     private Point position = new Point(0, 0);
+
+    private Ellipse foreground;
+    private Ellipse background;
+    private Ellipse foreground2ndLayer;
+    private Ellipse background2ndLayer;
 
     @Override
     public int getID() {
@@ -37,6 +44,7 @@ public class ClientPiece extends StackPane implements Piece {
 
     public void promote() {
         this.kind = Piece.Kind.king;
+        readdChildren();
     }
 
     public ClientPiece(int ID, Piece.Kind kind, Piece.Color color,
@@ -48,39 +56,63 @@ public class ClientPiece extends StackPane implements Piece {
     }
 
     public void resize(final int size) {
+        setPrefSize(size, size);
+        setAlignment(Pos.CENTER);
+
         // We render the piece as a colored ellipse with an outline on top of
         // another ellipse in a contrasting color in order to add depth to the
         // pieces and improve their visibility.
 
-        final Ellipse background = new Ellipse(size * 0.3125, size * 0.26);
-        background.setStrokeWidth(size * 0.03);
-        background.setTranslateX((size - size * 0.3125 * 2) / 2);
-        background.setTranslateY((size - size * 0.26 * 2) / 2 + size * 0.07);
+        final double width = size * 0.3125;
+        final double height = size * 0.26;
+        final double outline = size * 0.04;
 
-        // Indicator is a dot that will appear on a piece after its promotion.
-        // Ellipse indicator = new Ellipse(size * 0.15625, size * 0.13);
-        // indicator.setStrokeWidth(size * 0.03);
-        // indicator.setTranslateX((size - size * 0.15625 * 2) / 2);
-        // indicator.setTranslateY((size - size * 0.13 * 2) / 2 + size * 0.07);
+        final double verticalShift = size * 0.05;
 
-        final Ellipse foreground = new Ellipse(size * 0.3125, size * 0.26);
-        foreground.setStrokeWidth(size * 0.03);
-        foreground.setTranslateX((size - size * 0.3125 * 2) / 2);
-        foreground.setTranslateY((size - size * 0.26 * 2) / 2);
+        foreground = new Ellipse(width, height);
+        foreground.setStrokeType(StrokeType.INSIDE);
+        foreground.setStrokeWidth(outline);
 
-        if(color == Piece.Color.black) {
-            foreground.setFill(ColorPalette.pieceBlackFg);
-            background.setFill(ColorPalette.pieceBlackBg);
-            foreground.setStroke(ColorPalette.pieceBlackBg);
-            background.setStroke(ColorPalette.pieceBlackBg);
-        } else {
-            foreground.setFill(ColorPalette.pieceWhiteFg);
-            background.setFill(ColorPalette.pieceWhiteBg);
-            foreground.setStroke(ColorPalette.pieceWhiteBg);
-            background.setStroke(ColorPalette.pieceWhiteBg);
-        }
+        background = new Ellipse(width, height);
+        background.setStrokeType(StrokeType.INSIDE);
+        background.setStrokeWidth(outline);
+        background.setTranslateY(2 * verticalShift);
 
+        foreground2ndLayer = new Ellipse(width, height);
+        foreground2ndLayer.setStrokeType(StrokeType.INSIDE);
+        foreground2ndLayer.setStrokeWidth(outline);
+        foreground2ndLayer.setTranslateY(2 * -verticalShift);
+
+        background2ndLayer = new Ellipse(width, height);
+        background2ndLayer.setStrokeType(StrokeType.INSIDE);
+        background2ndLayer.setStrokeWidth(outline);
+
+        final javafx.scene.paint.Color colorFg =
+            (color == Piece.Color.black ? ColorPalette.pieceBlackFg
+                                        : ColorPalette.pieceWhiteFg);
+        final javafx.scene.paint.Color colorBg =
+            (color == Piece.Color.black ? ColorPalette.pieceBlackBg
+                                        : ColorPalette.pieceWhiteBg);
+
+        foreground.setFill(colorFg);
+        foreground.setStroke(colorBg);
+        background.setFill(colorBg);
+        background.setStroke(colorBg);
+        foreground2ndLayer.setFill(colorFg);
+        foreground2ndLayer.setStroke(colorBg);
+        background2ndLayer.setFill(colorBg);
+        background2ndLayer.setStroke(colorFg);
+
+        readdChildren();
+    }
+
+    private void readdChildren() {
         getChildren().clear();
-        getChildren().addAll(background, foreground);
+        if(kind == Piece.Kind.pawn) {
+            getChildren().addAll(background, foreground);
+        } else {
+            getChildren().addAll(background, foreground, background2ndLayer,
+                                 foreground2ndLayer);
+        }
     }
 }
