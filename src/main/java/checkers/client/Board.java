@@ -87,6 +87,25 @@ public class Board extends Pane {
         }
     }
 
+    public void handleRequestTake(final int pieceID) {
+        final ClientPiece piece = findPieceWithID(pieceID);
+        if(piece == null) {
+            return;
+        }
+
+        pieces.remove(piece);
+        pieceGroup.getChildren().remove(piece);
+    }
+
+    public void handleRequestPromote(final int pieceID) {
+        final ClientPiece piece = findPieceWithID(pieceID);
+        if(piece == null) {
+            return;
+        }
+
+        piece.promote();
+    }
+
     private ClientPiece findPieceWithID(final int pieceID) {
         for(final ClientPiece piece: pieces) {
             if(piece.getID() == pieceID) {

@@ -55,7 +55,6 @@ public class Client implements RequestService, CommandReceiver {
 
     @Override
     public void receiveCommand(final int socketID, final String command) {
-        // TODO: Add missing server-issued commands.
         final CommandParser parser = new CommandParser(command);
         if(parser.match("list-game-properties")) {
             final Dimensions2D size = parseListGameProperties(parser);
@@ -76,6 +75,18 @@ public class Client implements RequestService, CommandReceiver {
             parser.match(",");
             final int y = parser.matchInteger();
             game.handleRequestMove(pieceID, new Point(x, y));
+            return;
+        }
+
+        if(parser.match("take")) {
+            final int pieceID = parser.matchInteger();
+            game.handleRequestTake(pieceID);
+            return;
+        }
+
+        if(parser.match("promote")) {
+            final int pieceID = parser.matchInteger();
+            game.handleRequestPromote(pieceID);
             return;
         }
 

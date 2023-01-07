@@ -39,6 +39,14 @@ public class Game {
         board.handleRequestMove(pieceID, position);
     }
 
+    public void handleRequestTake(final int pieceID) {
+        board.handleRequestTake(pieceID);
+    }
+
+    public void handleRequestPromote(final int pieceID) {
+        board.handleRequestPromote(pieceID);
+    }
+
     public void run() {
         requester.requestSize();
         requester.requestListPieces();
