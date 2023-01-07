@@ -12,7 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 
 public class Board extends Pane {
     private final Group tileGroup =
@@ -41,8 +40,8 @@ public class Board extends Pane {
         for(int y = 0; y < dimensions.height; y++) {
             for(int x = 0; x < dimensions.width; x++) {
                 final Tile tile = new Tile(x, y, size);
-                tile.setColor((x + y) % 2 == 0 ? Color.GREENYELLOW
-                                               : Color.GREEN);
+                tile.setColor((x + y) % 2 == 0 ? ColorPalette.squareLight
+                                               : ColorPalette.squareDark);
                 tiles.add(tile);
                 tileGroup.getChildren().add(tile);
 
