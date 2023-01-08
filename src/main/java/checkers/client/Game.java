@@ -1,6 +1,7 @@
 package checkers.client;
 
 import checkers.Dimensions2D;
+import checkers.Piece;
 import checkers.Point;
 import java.util.List;
 import javafx.scene.Scene;
@@ -41,11 +42,13 @@ public class Game {
         board.handleRequestPromote(pieceID);
     }
 
-    public void run() {
+    public void run(final PlayerInformation player) {
         requester.requestSize();
         requester.requestListPieces();
-
-        stage.setTitle("Checkers");
+        final String title =
+            (player.color == Piece.Color.white ? "Checkers - White"
+                                               : "Checkers - Black");
+        stage.setTitle(title);
         stage.setResizable(false);
         stage.show();
     }

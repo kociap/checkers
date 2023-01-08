@@ -19,8 +19,7 @@ public class Client implements RequestService, CommandReceiver {
 
         poller.start();
 
-        // TODO: Pass PlayerInformation to game.
-        game.run();
+        game.run(player);
     }
 
     private PlayerInformation connect() {
